@@ -1,0 +1,86 @@
+---
+import Knopf from './Knopf.astro';
+
+interface Props {
+  titel: string;
+  text: string;
+  knopf?: { text: string; ziel: string };
+  bild?: string;
+  bild_alt?: string;
+}
+const { titel, text, knopf, bild, bild_alt } = Astro.props as Props;
+---
+
+<section class="einstieg">
+  <div class={`container einstieg-innen ${bild ? 'einstieg-innen--bild' : ''}`}>
+    <div class="einstieg-text">
+      <h1>{titel}</h1>
+      <p class="einstieg-absatz">{text}</p>
+      {knopf && <Knopf text={knopf.text} ziel={knopf.ziel} />}
+    </div>
+    {bild && (
+      <div class="einstieg-bild">
+        <img src={bild} alt={bild_alt ?? ''} width="640" height="640" />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .einstieg {
+    padding-block: clamp(2.5rem, 2rem + 3vw, 5.5rem) var(--raum-l);
+  }
+  .einstieg-innen {
+    display: grid;
+    gap: var(--raum-m);
+    align-items: center;
+  }
+  .einstieg-innen--bild {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+  .einstieg-text {
+    display: grid;
+    gap: var(--raum-s);
+    max-width: 34rem;
+    justify-items: start;
+  }
+  .einstieg-absatz {
+    font-size: 1.15rem;
+    color: var(--text-schwach);
+    max-width: 42ch;
+  }
+  .einstieg-bild img {
+    border-radius: var(--radius);
+    width: 100%;
+  }
+  @media (max-width: 780px) {
+    .einstieg-innen--bild {
+      grid-template-columns: 1fr;
+    }
+    .einstieg-bild {
+      order: -1;
+      max-width: 11rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .einstieg {
+      padding-block: 1.5rem var(--raum-m);
+    }
+    .einstieg-bild {
+      max-width: 7rem;
+    }
+    .einstieg-text {
+      gap: 0.75rem;
+      justify-items: stretch;
+    }
+    .einstieg-text :global(.knopf) {
+      justify-content: center;
+    }
+    .einstieg-absatz {
+      font-size: 1rem;
+    }
+    .einstieg-text h1 {
+      font-size: 1.9rem;
+    }
+  }
+</style>

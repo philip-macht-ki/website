@@ -1,0 +1,53 @@
+---
+interface Props {
+  titel: string;
+  text: string;
+  bild: string;
+  bild_alt: string;
+  seite?: 'links' | 'rechts';
+}
+const { titel, text, bild, bild_alt, seite: bildseite = 'rechts' } = Astro.props as Props;
+---
+
+<section class="abschnitt">
+  <div class={`container text-bild text-bild--${bildseite}`}>
+    <div class="text-bild-text">
+      <h2>{titel}</h2>
+      <p class="text-schwach">{text}</p>
+    </div>
+    <div class="text-bild-bild">
+      <img src={bild} alt={bild_alt} width="720" height="540" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .text-bild {
+    display: grid;
+    gap: var(--raum-m);
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+  }
+  .text-bild--links {
+    direction: rtl;
+  }
+  .text-bild--links > * {
+    direction: ltr;
+  }
+  .text-bild-text {
+    display: grid;
+    gap: 1rem;
+    max-width: 40ch;
+  }
+  .text-bild-bild img {
+    border-radius: var(--radius);
+  }
+  @media (max-width: 780px) {
+    .text-bild {
+      grid-template-columns: 1fr;
+    }
+    .text-bild--links {
+      direction: ltr;
+    }
+  }
+</style>

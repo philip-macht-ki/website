@@ -1,0 +1,42 @@
+---
+import seite from '../../seite.json';
+import NewsletterFormular from './NewsletterFormular.astro';
+
+interface Props {
+  titel?: string;
+  text?: string;
+}
+const { titel, text } = Astro.props as Props;
+const newsletter = seite.newsletter;
+---
+
+{newsletter.an && (
+  <section class="abschnitt">
+    <div class="container newsletter-innen">
+      <div class="newsletter-text">
+        <h2>{titel ?? newsletter.titel}</h2>
+        <p class="text-schwach">{text ?? newsletter.versprechen}</p>
+      </div>
+      <NewsletterFormular />
+    </div>
+  </section>
+)}
+
+<style>
+  .newsletter-innen {
+    display: grid;
+    gap: var(--raum-m);
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: start;
+  }
+  .newsletter-text {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 32ch;
+  }
+  @media (max-width: 780px) {
+    .newsletter-innen {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

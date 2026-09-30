@@ -1,0 +1,31 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+---
+
+<Grundlage
+  titel="Fast geschafft"
+  beschreibung="Schauen Sie in Ihr Postfach und bestätigen Sie die Anmeldung."
+>
+  <section class="danke">
+    <div class="container--eng danke-innen">
+      <h1>Schauen Sie in Ihr Postfach</h1>
+      <p class="text-schwach">
+        Dort wartet eine E-Mail mit einem Bestätigungslink. Erst nach dem Klick
+        darauf sind Sie wirklich angemeldet.
+      </p>
+      <a class="knopf knopf--primaer" href="/">Zur Startseite</a>
+    </div>
+  </section>
+</Grundlage>
+
+<style>
+  .danke {
+    padding-block: var(--raum-xl);
+    text-align: center;
+  }
+  .danke-innen {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+</style>

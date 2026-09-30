@@ -1,0 +1,9 @@
+.karte {
+  border-radius: var(--radius);
+}
+.kreis {
+  border-radius: 50%;
+}
+.flach {
+  border-radius: 0;
+}

@@ -1,0 +1,27 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+
+const dateien = import.meta.glob('../../inhalt/*.md', { eager: true }) as Record<
+  string,
+  { frontmatter: any }
+>;
+const seiteInhalt = dateien['../../inhalt/impressum.md'].frontmatter;
+---
+
+<Grundlage titel={seiteInhalt.titel} beschreibung={seiteInhalt.beschreibung}>
+  <section class="rechtstext">
+    <div class="container--eng">
+      <h1>{seiteInhalt.titel}</h1>
+      <p class="text-schwach">{seiteInhalt.text}</p>
+    </div>
+  </section>
+</Grundlage>
+
+<style>
+  .rechtstext {
+    padding-block: var(--raum-l);
+  }
+  .rechtstext h1 {
+    margin-bottom: var(--raum-s);
+  }
+</style>

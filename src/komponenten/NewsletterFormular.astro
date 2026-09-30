@@ -1,0 +1,34 @@
+---
+import seite from '../../seite.json';
+const newsletter = seite.newsletter;
+---
+
+<p class="formular-hinweis formular-fehler" role="alert" data-formular-fehler hidden></p>
+
+<form method="POST" action="/.netlify/functions/newsletter" class="formular">
+  <p class="versteckt">
+    <label>Bitte leer lassen: <input name="telefon2" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="formular-feld">
+    <label for="newsletter-vorname">Vorname (optional)</label>
+    <input id="newsletter-vorname" name="vorname" type="text" autocomplete="given-name" />
+  </div>
+
+  <div class="formular-feld">
+    <label for="newsletter-email">E-Mail</label>
+    <input id="newsletter-email" name="email" type="email" autocomplete="email" required />
+  </div>
+
+  <label class="formular-einwilligung">
+    <input type="checkbox" name="einwilligung" value="ja" required />
+    <span>
+      {newsletter.versprechen} Sie erhalten eine Bestätigungs-E-Mail und können
+      sich jederzeit über einen Link in jeder Ausgabe wieder abmelden.
+    </span>
+  </label>
+
+  <button type="submit" class="knopf knopf--primaer">Anmelden</button>
+</form>
+
+<script src="/fehler.js" defer></script>

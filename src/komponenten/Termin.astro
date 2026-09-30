@@ -1,0 +1,32 @@
+---
+import seite from '../../seite.json';
+import TerminKnopf from './TerminKnopf.astro';
+
+interface Props {
+  titel?: string;
+  text?: string;
+}
+const { titel, text } = Astro.props as Props;
+const termin = seite.termin;
+---
+
+{termin.an && termin.link && (
+  <section class="abschnitt termin-abschnitt">
+    <div class="container--eng termin-innen">
+      <h2>{titel ?? 'Ein Termin ist schneller als drei E-Mails'}</h2>
+      {text && <p class="text-schwach">{text}</p>}
+      <TerminKnopf />
+    </div>
+  </section>
+)}
+
+<style>
+  .termin-abschnitt {
+    text-align: center;
+  }
+  .termin-innen {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+</style>

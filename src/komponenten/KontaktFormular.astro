@@ -1,0 +1,48 @@
+---
+// Formular exakt nach ARCHITEKTUR.md, Abschnitt „Formulare“. Netlify erkennt
+// dieses Formular beim Bauen, weil name + data-netlify + der versteckte
+// form-name-Wert im statischen HTML stehen. Ohne JavaScript nutzbar. Der
+// Fehlerhinweis für ?fehler=1|2 kommt über das eigene, selbst gehostete
+// public/fehler.js (CSP erlaubt script-src 'self'). Ohne JavaScript bleibt
+// das Formular voll nutzbar, es fehlt dann nur dieser Zusatzhinweis.
+---
+
+<p class="formular-hinweis formular-fehler" role="alert" data-formular-fehler hidden></p>
+
+<form
+  name="kontakt"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="firma-website"
+  action="/kontakt-danke"
+  class="formular"
+>
+  <input type="hidden" name="form-name" value="kontakt" />
+  <p class="versteckt">
+    <label>Bitte leer lassen: <input name="firma-website" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="formular-feld">
+    <label for="kontakt-name">Name</label>
+    <input id="kontakt-name" name="name" type="text" autocomplete="name" required />
+  </div>
+
+  <div class="formular-feld">
+    <label for="kontakt-email">E-Mail</label>
+    <input id="kontakt-email" name="email" type="email" autocomplete="email" required />
+  </div>
+
+  <div class="formular-feld">
+    <label for="kontakt-nachricht">Nachricht</label>
+    <textarea id="kontakt-nachricht" name="nachricht" rows="5" required></textarea>
+  </div>
+
+  <p class="formular-hinweis">
+    Mit dem Absenden stimmen Sie zu, dass Ihre Angaben zur Bearbeitung Ihrer
+    Anfrage gespeichert werden. Näheres in der <a href="/datenschutz">Datenschutzerklärung</a>.
+  </p>
+
+  <button type="submit" class="knopf knopf--primaer">Nachricht senden</button>
+</form>
+
+<script src="/fehler.js" defer></script>

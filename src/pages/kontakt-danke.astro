@@ -1,0 +1,31 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+---
+
+<Grundlage
+  titel="Nachricht angekommen"
+  beschreibung="Danke für Ihre Nachricht. Ich melde mich in der Regel innerhalb von zwei Werktagen."
+>
+  <section class="danke">
+    <div class="container--eng danke-innen">
+      <h1>Danke für Ihre Nachricht</h1>
+      <p class="text-schwach">
+        Ich melde mich in der Regel innerhalb von zwei Werktagen. Falls es
+        eilt, schreiben Sie gern direkt eine E-Mail.
+      </p>
+      <a class="knopf knopf--primaer" href="/">Zur Startseite</a>
+    </div>
+  </section>
+</Grundlage>
+
+<style>
+  .danke {
+    padding-block: var(--raum-xl);
+    text-align: center;
+  }
+  .danke-innen {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+</style>

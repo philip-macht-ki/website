@@ -1,0 +1,31 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+---
+
+<Grundlage
+  titel="Seite nicht gefunden"
+  beschreibung="Diese Seite gibt es nicht oder nicht mehr."
+>
+  <section class="danke">
+    <div class="container--eng danke-innen">
+      <h1>Diese Seite gibt es nicht</h1>
+      <p class="text-schwach">
+        Vielleicht wurde sie verschoben, vielleicht war es ein Tippfehler in
+        der Adresse.
+      </p>
+      <a class="knopf knopf--primaer" href="/">Zur Startseite</a>
+    </div>
+  </section>
+</Grundlage>
+
+<style>
+  .danke {
+    padding-block: var(--raum-xl);
+    text-align: center;
+  }
+  .danke-innen {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+</style>

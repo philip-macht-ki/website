@@ -1,0 +1,27 @@
+{
+  "name": "Studio Beispiel",
+  "inhaber": "Mara Beispiel",
+  "beruf": "Grafikdesign für kleine Betriebe",
+  "ort": "Musterstadt",
+  "adresse": { "strasse": "Beispielweg 1", "plz": "12345", "ort": "Musterstadt", "land": "Deutschland" },
+  "email": "hallo@studio-beispiel.example",
+  "telefon": "",
+  "ust_id": "",
+  "rechtsform": "Einzelunternehmen",
+  "domain": "studio-beispiel.example",
+  "sprache": "de",
+  "gestaltung": {
+    "akzent": "#b4532a",
+    "grund": "#f6f3ee",
+    "text": "#1d1b19",
+    "radius": "6px",
+    "schrift_titel": "fraunces",
+    "schrift_text": "public-sans"
+  },
+  "navigation": ["leistungen", "ueber-mich", "kontakt"],
+  "kontakt": { "an": true, "benachrichtigung": "hallo@studio-beispiel.example" },
+  "newsletter": { "an": true, "anbieter": "brevo", "liste": "2", "titel": "Post aus dem Studio", "versprechen": "Einmal im Monat ein Gedanke zu Gestaltung für kleine Betriebe." },
+  "termin": { "an": false, "anbieter": "google", "link": "", "text": "Kennenlernen buchen" },
+  "veroeffentlichen": { "grenze_monat": 8, "netlify_site": "" },
+  "waechter": { "mitteilung": true }
+}

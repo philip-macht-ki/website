@@ -1,0 +1,84 @@
+---
+interface Frage {
+  frage: string;
+  antwort: string;
+}
+interface Props {
+  titel: string;
+  fragen: Frage[];
+}
+const { titel, fragen } = Astro.props as Props;
+---
+
+<section class="abschnitt">
+  <div class="container fragen-innen">
+    <h2 class="fragen-titel">{titel}</h2>
+    <div class="fragen-liste">
+      {fragen.map((eintrag) => (
+        <details class="frage">
+          <summary>
+            <span>{eintrag.frage}</span>
+            <span class="frage-zeichen" aria-hidden="true"></span>
+          </summary>
+          <p class="text-schwach">{eintrag.antwort}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .fragen-titel {
+    margin-bottom: var(--raum-m);
+    max-width: 26ch;
+  }
+  .fragen-liste {
+    display: grid;
+    max-width: 44rem;
+  }
+  .frage {
+    border-top: 1px solid var(--linie);
+    padding-block: 1.1rem;
+  }
+  .fragen-liste .frage:last-child {
+    border-bottom: 1px solid var(--linie);
+  }
+  .frage summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-weight: 600;
+  }
+  .frage-zeichen {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+  }
+  .frage-zeichen::before,
+  .frage-zeichen::after {
+    content: '';
+    position: absolute;
+    background: var(--text);
+    inset: 0;
+    margin: auto;
+    transition: transform var(--dauer) ease;
+  }
+  .frage-zeichen::before {
+    width: 100%;
+    height: 2px;
+  }
+  .frage-zeichen::after {
+    width: 2px;
+    height: 100%;
+  }
+  .frage[open] .frage-zeichen::after {
+    transform: rotate(90deg);
+    opacity: 0;
+  }
+  .frage p {
+    margin-top: 0.75rem;
+    max-width: 60ch;
+  }
+</style>

@@ -1,0 +1,282 @@
+/*
+  Design-Tokens kommen als CSS-Variablen aus src/layouts/Grundlage.astro
+  (gespeist aus seite.json.gestaltung): --akzent, --grund, --text, --radius,
+  --schrift-titel, --schrift-text. Diese Datei rechnet nur mit ihnen, sie
+  definiert nie eigene Farben oder Radien.
+
+  Design-Read: ruhige Seite einer Grafikdesignerin für kleine Betriebe. Warmes
+  Papier, eine Akzentfarbe, ein Radius, viel Luft, kräftige Titelschrift.
+  Variance 6, Motion 2 (nur CSS-Übergänge, kein Scroll-Hijack), Dichte 2-3.
+*/
+
+:root {
+  --flaeche: color-mix(in srgb, var(--grund) 92%, var(--text) 8%);
+  --linie: color-mix(in srgb, var(--text) 14%, transparent);
+  --text-schwach: color-mix(in srgb, var(--text) 62%, var(--grund) 38%);
+  --akzent-text: var(--grund);
+  --schatten: 0 1px 0 var(--linie);
+
+  --lh-eng: 1.08;
+  --lh-titel: 1.18;
+  --lh-text: 1.6;
+
+  --schritt: clamp(1rem, 0.94rem + 0.3vw, 1.125rem);
+  --raum-xs: 0.5rem;
+  --raum-s: 1rem;
+  --raum-m: clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
+  --raum-l: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  --raum-xl: clamp(4rem, 3rem + 5vw, 8rem);
+
+  --breite-lesen: 62ch;
+  --breite-seite: 1180px;
+
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --dauer: 0.22s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dauer: 0s;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--grund);
+  color: var(--text);
+  font-family: var(--schrift-text);
+  font-size: var(--schritt);
+  line-height: var(--lh-text);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--schrift-titel);
+  font-weight: 600;
+  line-height: var(--lh-titel);
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 1.8rem + 2.2vw, 3.8rem);
+  line-height: var(--lh-eng);
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: clamp(1.7rem, 1.5rem + 1vw, 2.4rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Ein Fokus-Stil für die ganze Seite. */
+:focus-visible {
+  outline: 2px solid var(--akzent);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+.container {
+  width: min(100% - 2 * var(--raum-s), var(--breite-seite));
+  margin-inline: auto;
+}
+
+.container--eng {
+  width: min(100% - 2 * var(--raum-s), var(--breite-lesen) + 4rem);
+  margin-inline: auto;
+}
+
+.abschnitt {
+  padding-block: var(--raum-l);
+}
+
+.abschnitt + .abschnitt {
+  border-top: 1px solid var(--linie);
+}
+
+.text-schwach {
+  color: var(--text-schwach);
+}
+
+.mono-eyebrow {
+  font-family: var(--schrift-text);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--text-schwach);
+  text-transform: uppercase;
+}
+
+/* Knopf: ein Radius, eine Akzentfarbe, klare Zustände. */
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--radius);
+  font-family: var(--schrift-text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform var(--dauer) ease, background-color var(--dauer) ease,
+    border-color var(--dauer) ease, color var(--dauer) ease;
+  white-space: nowrap;
+}
+
+.knopf:active {
+  transform: translateY(1px);
+}
+
+.knopf--primaer {
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+
+.knopf--primaer:hover {
+  background: color-mix(in srgb, var(--akzent) 88%, black 12%);
+}
+
+.knopf--zweitrangig {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--linie);
+}
+
+.knopf--zweitrangig:hover {
+  border-color: var(--akzent);
+  color: var(--akzent);
+}
+
+/* Formulare */
+.formular {
+  display: grid;
+  gap: var(--raum-s);
+  max-width: 32rem;
+}
+
+.formular-feld {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.formular-feld label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.formular-feld input,
+.formular-feld textarea {
+  font: inherit;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--linie);
+  background: var(--flaeche);
+  color: var(--text);
+}
+
+.formular-feld input::placeholder,
+.formular-feld textarea::placeholder {
+  color: var(--text-schwach);
+}
+
+.formular-feld input:focus,
+.formular-feld textarea:focus {
+  border-color: var(--akzent);
+}
+
+.formular-einwilligung {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  color: var(--text-schwach);
+}
+
+.formular-einwilligung input {
+  margin-top: 0.3rem;
+}
+
+.formular-hinweis {
+  font-size: 0.85rem;
+  color: var(--text-schwach);
+}
+
+.formular-fehler {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  background: color-mix(in srgb, var(--akzent) 12%, var(--grund));
+  border: 1px solid color-mix(in srgb, var(--akzent) 45%, transparent);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  max-width: 32rem;
+  margin-bottom: var(--raum-s);
+}
+
+.formular-fehler[hidden] {
+  display: none;
+}
+
+.versteckt {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Details/Summary ohne Browser-Pfeil-Chaos, für Menü und Fragen. */
+details > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}

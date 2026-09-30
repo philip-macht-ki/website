@@ -1,0 +1,230 @@
+---
+import '../styles/grund.css';
+import seite from '../../seite.json';
+
+interface Props {
+  titel: string;
+  beschreibung: string;
+}
+const { titel, beschreibung } = Astro.props as Props;
+
+const g = seite.gestaltung;
+
+// Fontsource lädt nur die Schnitte, die die Seite wirklich zeigt: Regular,
+// Kursiv fürs Zitat, Halbfett und Fett für Titel und Knöpfe. Der Name kommt
+// aus seite.json, nicht fest verdrahtet, deshalb per Glob statt festem Pfad.
+const schriftDateien = import.meta.glob(
+  '/node_modules/@fontsource/*/{400,400-italic,600,700}.css'
+);
+
+async function ladeSchrift(name: string) {
+  if (!name) return;
+  const treffer = Object.keys(schriftDateien).filter((pfad) =>
+    pfad.includes(`/@fontsource/${name}/`)
+  );
+  for (const pfad of treffer) {
+    await schriftDateien[pfad]();
+  }
+}
+
+await ladeSchrift(g.schrift_titel);
+await ladeSchrift(g.schrift_text);
+
+function markenname(paket: string) {
+  return paket
+    .split('-')
+    .map((wort) => wort.charAt(0).toUpperCase() + wort.slice(1))
+    .join(' ');
+}
+
+const schriftTitel = g.schrift_titel
+  ? `'${markenname(g.schrift_titel)}', Iowan Old Style, Georgia, serif`
+  : 'Iowan Old Style, Georgia, serif';
+const schriftText = g.schrift_text
+  ? `'${markenname(g.schrift_text)}', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
+  : '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+const jahr = new Date().getFullYear();
+
+const navigationsNamen: Record<string, string> = {
+  leistungen: 'Leistungen',
+  'ueber-mich': 'Über mich',
+  kontakt: 'Kontakt',
+};
+
+const seitenUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const bildOg = new URL('/bilder/formen-1.svg', Astro.site).toString();
+---
+
+<!doctype html>
+<html
+  lang="de"
+  style={`--akzent:${g.akzent};--grund:${g.grund};--text:${g.text};--radius:${g.radius};--schrift-titel:${schriftTitel};--schrift-text:${schriftText};`}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titel} · {seite.name}</title>
+    <meta name="description" content={beschreibung} />
+    <link rel="canonical" href={seitenUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={seite.name} />
+    <meta property="og:title" content={titel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:url" content={seitenUrl} />
+    <meta property="og:image" content={bildOg} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <a class="versteckt" href="#hauptinhalt">Zum Inhalt springen</a>
+
+    <header class="kopf">
+      <div class="container kopf-reihe">
+        <a class="kopf-marke" href="/">{seite.name}</a>
+
+        <nav class="kopf-nav kopf-nav--gross" aria-label="Hauptnavigation">
+          <ul>
+            {seite.navigation.map((name: string) => (
+              <li><a href={`/${name}`}>{navigationsNamen[name] ?? name}</a></li>
+            ))}
+            {seite.newsletter.an && (
+              <li><a href="/newsletter">Newsletter</a></li>
+            )}
+          </ul>
+        </nav>
+
+        <details class="kopf-nav--klein">
+          <summary aria-label="Menü öffnen">
+            <span class="menu-strich" aria-hidden="true"></span>
+            <span class="menu-strich" aria-hidden="true"></span>
+            <span class="menu-strich" aria-hidden="true"></span>
+          </summary>
+          <nav aria-label="Hauptnavigation, Handy">
+            <ul>
+              {seite.navigation.map((name: string) => (
+                <li><a href={`/${name}`}>{navigationsNamen[name] ?? name}</a></li>
+              ))}
+              {seite.newsletter.an && (
+                <li><a href="/newsletter">Newsletter</a></li>
+              )}
+            </ul>
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main id="hauptinhalt">
+      <slot />
+    </main>
+
+    <footer class="fuss">
+      <div class="container fuss-reihe">
+        <p class="text-schwach">
+          © {jahr} {seite.inhaber} · {seite.name}
+        </p>
+        <nav aria-label="Rechtliches">
+          <ul class="fuss-links">
+            <li><a href="/impressum">Impressum</a></li>
+            <li><a href="/datenschutz">Datenschutz</a></li>
+            {seite.newsletter.an && (
+              <li><a href="/newsletter">Newsletter</a></li>
+            )}
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <style>
+      .kopf {
+        padding-block: 1.1rem;
+        border-bottom: 1px solid var(--linie);
+      }
+      .kopf-reihe {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .kopf-marke {
+        font-family: var(--schrift-titel);
+        font-weight: 600;
+        font-size: 1.15rem;
+        text-decoration: none;
+        color: var(--text);
+      }
+      .kopf-nav--gross ul {
+        display: flex;
+        gap: 1.75rem;
+      }
+      .kopf-nav--gross a {
+        text-decoration: none;
+        font-size: 0.95rem;
+        border-bottom: 1px solid transparent;
+        transition: border-color var(--dauer) ease;
+      }
+      .kopf-nav--gross a:hover {
+        border-color: var(--akzent);
+      }
+      .kopf-nav--klein {
+        display: none;
+      }
+      .kopf-nav--klein summary {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0.5rem;
+        margin: -0.5rem;
+      }
+      .menu-strich {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--text);
+      }
+      .kopf-nav--klein nav {
+        padding-top: 1rem;
+      }
+      .kopf-nav--klein ul {
+        display: grid;
+        gap: 0.9rem;
+      }
+      .kopf-nav--klein a {
+        text-decoration: none;
+        font-size: 1.05rem;
+      }
+      @media (max-width: 720px) {
+        .kopf-nav--gross {
+          display: none;
+        }
+        .kopf-nav--klein {
+          display: block;
+        }
+      }
+      .fuss {
+        padding-block: var(--raum-m);
+        border-top: 1px solid var(--linie);
+      }
+      .fuss-reihe {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.9rem;
+      }
+      .fuss-links {
+        display: flex;
+        gap: 1.25rem;
+      }
+      .fuss-links a {
+        text-decoration: none;
+        color: var(--text-schwach);
+      }
+      .fuss-links a:hover {
+        color: var(--akzent);
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+---
+interface Props {
+  text: string;
+  ziel: string;
+  variante?: 'primaer' | 'zweitrangig';
+}
+const { text, ziel, variante = 'primaer' } = Astro.props as Props;
+
+const bekanntePfade = new Set([
+  'leistungen',
+  'ueber-mich',
+  'kontakt',
+  'newsletter',
+]);
+
+function aufloesen(ziel: string) {
+  if (ziel.startsWith('http') || ziel.startsWith('/') || ziel.startsWith('#')) {
+    return ziel;
+  }
+  if (bekanntePfade.has(ziel)) {
+    return `/${ziel}`;
+  }
+  return ziel;
+}
+
+const href = aufloesen(ziel);
+const extern = href.startsWith('http');
+---
+
+<a
+  class={`knopf knopf--${variante}`}
+  href={href}
+  target={extern ? '_blank' : undefined}
+  rel={extern ? 'noopener noreferrer' : undefined}
+>
+  {text}
+</a>

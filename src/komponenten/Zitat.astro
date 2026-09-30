@@ -1,0 +1,40 @@
+---
+interface Props {
+  text: string;
+  wer: string;
+}
+const { text, wer } = Astro.props as Props;
+---
+
+<section class="abschnitt zitat-abschnitt">
+  <div class="container--eng">
+    <blockquote class="zitat">
+      <p>{text}</p>
+      <footer>{wer}</footer>
+    </blockquote>
+  </div>
+</section>
+
+<style>
+  .zitat-abschnitt {
+    text-align: center;
+  }
+  .zitat {
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+  .zitat p {
+    font-family: var(--schrift-titel);
+    font-style: italic;
+    font-size: clamp(1.4rem, 1.2rem + 1vw, 2rem);
+    line-height: 1.35;
+    max-width: 28ch;
+    padding-bottom: 0.15em;
+  }
+  .zitat footer {
+    font-size: 0.95rem;
+    color: var(--text-schwach);
+  }
+</style>

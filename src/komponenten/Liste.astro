@@ -1,0 +1,59 @@
+---
+interface Punkt {
+  titel: string;
+  text: string;
+}
+interface Props {
+  titel: string;
+  punkte: Punkt[];
+}
+const { titel, punkte } = Astro.props as Props;
+---
+
+<section class="abschnitt">
+  <div class="container">
+    <h2 class="liste-titel">{titel}</h2>
+    <ul class="liste">
+      {punkte.map((punkt) => (
+        <li class="liste-punkt">
+          <h3>{punkt.titel}</h3>
+          <p class="text-schwach">{punkt.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .liste-titel {
+    max-width: 30ch;
+    margin-bottom: var(--raum-m);
+  }
+  .liste {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .liste-punkt {
+    padding-block: 1.5rem;
+    padding-right: 2rem;
+    border-top: 1px solid var(--linie);
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .liste-punkt:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--linie);
+  }
+  @media (max-width: 720px) {
+    .liste {
+      grid-template-columns: 1fr;
+    }
+    .liste-punkt:nth-last-child(-n + 2) {
+      border-bottom: none;
+    }
+    .liste-punkt:last-child {
+      border-bottom: 1px solid var(--linie);
+    }
+  }
+</style>

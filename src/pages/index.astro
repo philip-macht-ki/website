@@ -1,0 +1,14 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+import Abschnitte from '../komponenten/Abschnitte.astro';
+
+const dateien = import.meta.glob('../../inhalt/*.md', { eager: true }) as Record<
+  string,
+  { frontmatter: any }
+>;
+const seiteInhalt = dateien['../../inhalt/startseite.md'].frontmatter;
+---
+
+<Grundlage titel={seiteInhalt.titel} beschreibung={seiteInhalt.beschreibung}>
+  <Abschnitte abschnitte={seiteInhalt.abschnitte} />
+</Grundlage>

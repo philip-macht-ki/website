@@ -1,0 +1,31 @@
+---
+import Grundlage from '../layouts/Grundlage.astro';
+---
+
+<Grundlage
+  titel="Anmeldung bestätigt"
+  beschreibung="Die Anmeldung zum Newsletter ist bestätigt."
+>
+  <section class="danke">
+    <div class="container--eng danke-innen">
+      <h1>Anmeldung bestätigt</h1>
+      <p class="text-schwach">
+        Sie stehen jetzt auf der Liste. Die nächste Ausgabe kommt mit der
+        nächsten Post aus dem Studio.
+      </p>
+      <a class="knopf knopf--primaer" href="/">Zur Startseite</a>
+    </div>
+  </section>
+</Grundlage>
+
+<style>
+  .danke {
+    padding-block: var(--raum-xl);
+    text-align: center;
+  }
+  .danke-innen {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+</style>

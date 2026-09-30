@@ -1,0 +1,43 @@
+---
+import Einstieg from './Einstieg.astro';
+import TextBild from './TextBild.astro';
+import Liste from './Liste.astro';
+import Zitat from './Zitat.astro';
+import Band from './Band.astro';
+import Fragen from './Fragen.astro';
+import Newsletter from './Newsletter.astro';
+import Termin from './Termin.astro';
+
+interface Abschnitt {
+  art: string;
+  [feld: string]: unknown;
+}
+interface Props {
+  abschnitte: Abschnitt[];
+}
+const { abschnitte } = Astro.props as Props;
+---
+
+{abschnitte.map((abschnitt) => {
+  const { art, ...felder } = abschnitt;
+  switch (art) {
+    case 'einstieg':
+      return <Einstieg {...felder} />;
+    case 'text_bild':
+      return <TextBild {...felder} />;
+    case 'liste':
+      return <Liste {...felder} />;
+    case 'zitat':
+      return <Zitat {...felder} />;
+    case 'band':
+      return <Band {...felder} />;
+    case 'fragen':
+      return <Fragen {...felder} />;
+    case 'newsletter':
+      return <Newsletter {...felder} />;
+    case 'termin':
+      return <Termin {...felder} />;
+    default:
+      return null;
+  }
+})}

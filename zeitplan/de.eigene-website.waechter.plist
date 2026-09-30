@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Vorlage für den wöchentlichen Wächter-Lauf, montags 08:30.
+
+  Vor dem Laden zwei Platzhalter ersetzen:
+    __NODE_PFAD__     absoluter Pfad zu node, z. B. mit `which node`
+                       herausfinden. NIE nur "node" eintragen: launchd kennt
+                       das PATH der Shell nicht, das Skript würde sonst mit
+                       "node: command not found" stumm scheitern.
+    __PROJEKT_PFAD__  absoluter Pfad zu diesem Projektordner (der Ordner mit
+                       package.json und seite.json).
+
+  Laden:
+    cp zeitplan/de.eigene-website.waechter.plist \
+       ~/Library/LaunchAgents/de.eigene-website.waechter.plist
+    launchctl bootstrap gui/$(id -u) \
+       ~/Library/LaunchAgents/de.eigene-website.waechter.plist
+
+  Nach einer Änderung an der Datei erst entladen, dann wieder laden:
+    launchctl bootout gui/$(id -u)/de.eigene-website.waechter
+    launchctl bootstrap gui/$(id -u) \
+       ~/Library/LaunchAgents/de.eigene-website.waechter.plist
+
+  Log liegt unter arbeit/logs/waechter.log (der Ordner arbeit/ wird beim
+  ersten Lauf angelegt, falls er fehlt).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>de.eigene-website.waechter</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>__NODE_PFAD__</string>
+    <string>__PROJEKT_PFAD__/werkzeuge/waechter.mjs</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>__PROJEKT_PFAD__</string>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>8</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>__PROJEKT_PFAD__/arbeit/logs/waechter.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>__PROJEKT_PFAD__/arbeit/logs/waechter.log</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

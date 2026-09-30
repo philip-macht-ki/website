@@ -1,0 +1,54 @@
+---
+import Knopf from './Knopf.astro';
+
+interface Props {
+  titel: string;
+  text: string;
+  knopf: { text: string; ziel: string };
+}
+const { titel, text, knopf } = Astro.props as Props;
+---
+
+<section class="band">
+  <div class="container band-innen">
+    <div class="band-text">
+      <h2>{titel}</h2>
+      <p>{text}</p>
+    </div>
+    <Knopf text={knopf.text} ziel={knopf.ziel} variante="zweitrangig" />
+  </div>
+</section>
+
+<style>
+  .band {
+    background: var(--text);
+    color: var(--grund);
+    padding-block: var(--raum-l);
+  }
+  .band-innen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--raum-m);
+    align-items: center;
+    justify-content: space-between;
+  }
+  .band-text {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 36ch;
+  }
+  .band-text h2 {
+    color: var(--grund);
+  }
+  .band-text p {
+    color: color-mix(in srgb, var(--grund) 78%, transparent);
+  }
+  .band :global(.knopf--zweitrangig) {
+    color: var(--grund);
+    border-color: color-mix(in srgb, var(--grund) 40%, transparent);
+  }
+  .band :global(.knopf--zweitrangig:hover) {
+    border-color: var(--akzent);
+    color: var(--akzent);
+  }
+</style>

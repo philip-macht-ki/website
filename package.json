@@ -1,0 +1,28 @@
+{
+  "name": "eigene-website",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Die eigene Website: Claude baut sie, du änderst sie mit einem Satz.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "pruefen": "node werkzeuge/pruefen.mjs",
+    "vorschau": "node werkzeuge/vorschau.mjs",
+    "veroeffentlichen": "node werkzeuge/veroeffentlichen.mjs",
+    "rechtstexte": "node werkzeuge/rechtstexte.mjs",
+    "waechter": "node werkzeuge/waechter.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/public-sans": "^5.3.0",
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "netlify-cli": "^27.10.2"
+  }
+}
