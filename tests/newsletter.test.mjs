@@ -140,8 +140,12 @@ test('newsletter: JSON-Körper wird ebenso verarbeitet wie Formular-Körper', as
 test('newsletter: genau die Felder, die das gebaute Formular schickt, führen zur Anmeldung', async () => {
   // Felder und Werte aus dist/newsletter.html lesen, nicht von Hand annehmen.
   const { readFileSync, existsSync } = await import('node:fs');
-  const html = existsSync('dist/newsletter.html') ? readFileSync('dist/newsletter.html', 'utf8') : '';
-  assert.ok(html, 'dist/newsletter.html fehlt: vorher npm run build');
+  if (!existsSync('dist/newsletter.html')) {
+    // Frische Kopie ohne Build: einmal bauen, statt still zu scheitern.
+    const { execSync } = await import('node:child_process');
+    execSync('npx astro build', { stdio: 'ignore' });
+  }
+  const html = readFileSync('dist/newsletter.html', 'utf8');
   const felder = {};
   for (const m of html.matchAll(/<input[^>]*name="([^"]+)"[^>]*>/g)) {
     const wert = (m[0].match(/value="([^"]*)"/) || [])[1];

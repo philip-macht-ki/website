@@ -1,48 +1,84 @@
 ---
-// Formular exakt nach ARCHITEKTUR.md, Abschnitt „Formulare“. Netlify erkennt
-// dieses Formular beim Bauen, weil name + data-netlify + der versteckte
-// form-name-Wert im statischen HTML stehen. Ohne JavaScript nutzbar. Der
-// Fehlerhinweis für ?fehler=1|2 kommt über das eigene, selbst gehostete
-// public/fehler.js (CSP erlaubt script-src 'self'). Ohne JavaScript bleibt
-// das Formular voll nutzbar, es fehlt dann nur dieser Zusatzhinweis.
+// Formular nach ARCHITEKTUR.md, Abschnitt „Formulare“. Ziel und Schutz hängen
+// von seite.json.hosting.anbieter ab: Netlify erkennt das Formular beim
+// Bauen (data-netlify, form-name), weil es dann als Netlify Forms läuft;
+// Vercel hat keine eingebaute Formularerkennung, dort schickt das Formular an
+// die eigene Funktion api/kontakt.js, die per SMTP aus dem eigenen Postfach
+// verschickt. In beiden Fällen bleibt das Formular ohne JavaScript nutzbar,
+// es fehlt dann nur der Fehlerhinweis (public/fehler.js) und bei Vercel das
+// zusätzliche Zeitfeld (public/formular-zeit.js), das den Bot-Schutz stützt.
+import seite from '../../seite.json';
+const vercel = seite.hosting?.anbieter === 'vercel';
 ---
 
 <p class="formular-hinweis formular-fehler" role="alert" data-formular-fehler hidden></p>
 
-<form
-  name="kontakt"
-  method="POST"
-  data-netlify="true"
-  netlify-honeypot="firma-website"
-  action="/kontakt-danke"
-  class="formular"
->
-  <input type="hidden" name="form-name" value="kontakt" />
-  <p class="versteckt">
-    <label>Bitte leer lassen: <input name="firma-website" tabindex="-1" autocomplete="off" /></label>
-  </p>
+{vercel ? (
+  <form name="kontakt" method="POST" action="/api/kontakt" class="formular">
+    <p class="versteckt">
+      <label>Bitte leer lassen: <input name="firma-website" tabindex="-1" autocomplete="off" /></label>
+    </p>
+    <input type="hidden" name="formular_geladen" value="0" data-formular-geladen />
 
-  <div class="formular-feld">
-    <label for="kontakt-name">Name</label>
-    <input id="kontakt-name" name="name" type="text" autocomplete="name" required />
-  </div>
+    <div class="formular-feld">
+      <label for="kontakt-name">Name</label>
+      <input id="kontakt-name" name="name" type="text" autocomplete="name" required />
+    </div>
 
-  <div class="formular-feld">
-    <label for="kontakt-email">E-Mail</label>
-    <input id="kontakt-email" name="email" type="email" autocomplete="email" required />
-  </div>
+    <div class="formular-feld">
+      <label for="kontakt-email">E-Mail</label>
+      <input id="kontakt-email" name="email" type="email" autocomplete="email" required />
+    </div>
 
-  <div class="formular-feld">
-    <label for="kontakt-nachricht">Nachricht</label>
-    <textarea id="kontakt-nachricht" name="nachricht" rows="5" required></textarea>
-  </div>
+    <div class="formular-feld">
+      <label for="kontakt-nachricht">Nachricht</label>
+      <textarea id="kontakt-nachricht" name="nachricht" rows="5" required></textarea>
+    </div>
 
-  <p class="formular-hinweis">
-    Mit dem Absenden stimmen Sie zu, dass Ihre Angaben zur Bearbeitung Ihrer
-    Anfrage gespeichert werden. Näheres in der <a href="/datenschutz">Datenschutzerklärung</a>.
-  </p>
+    <p class="formular-hinweis">
+      Mit dem Absenden stimmen Sie zu, dass Ihre Angaben zur Bearbeitung Ihrer
+      Anfrage gespeichert werden. Näheres in der <a href="/datenschutz">Datenschutzerklärung</a>.
+    </p>
 
-  <button type="submit" class="knopf knopf--primaer">Nachricht senden</button>
-</form>
+    <button type="submit" class="knopf knopf--primaer">Nachricht senden</button>
+  </form>
+) : (
+  <form
+    name="kontakt"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="firma-website"
+    action="/kontakt-danke"
+    class="formular"
+  >
+    <input type="hidden" name="form-name" value="kontakt" />
+    <p class="versteckt">
+      <label>Bitte leer lassen: <input name="firma-website" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <div class="formular-feld">
+      <label for="kontakt-name">Name</label>
+      <input id="kontakt-name" name="name" type="text" autocomplete="name" required />
+    </div>
+
+    <div class="formular-feld">
+      <label for="kontakt-email">E-Mail</label>
+      <input id="kontakt-email" name="email" type="email" autocomplete="email" required />
+    </div>
+
+    <div class="formular-feld">
+      <label for="kontakt-nachricht">Nachricht</label>
+      <textarea id="kontakt-nachricht" name="nachricht" rows="5" required></textarea>
+    </div>
+
+    <p class="formular-hinweis">
+      Mit dem Absenden stimmen Sie zu, dass Ihre Angaben zur Bearbeitung Ihrer
+      Anfrage gespeichert werden. Näheres in der <a href="/datenschutz">Datenschutzerklärung</a>.
+    </p>
+
+    <button type="submit" class="knopf knopf--primaer">Nachricht senden</button>
+  </form>
+)}
 
 <script src="/fehler.js" defer></script>
+{vercel && <script src="/formular-zeit.js" defer></script>}

@@ -19,9 +19,10 @@
     "schrift_text": "public-sans"
   },
   "navigation": ["leistungen", "ueber-mich", "kontakt"],
+  "hosting": { "anbieter": "vercel" },
   "kontakt": { "an": true, "benachrichtigung": "hallo@studio-beispiel.example" },
-  "newsletter": { "an": true, "anbieter": "brevo", "liste": "2", "titel": "Post aus dem Studio", "versprechen": "Einmal im Monat ein Gedanke zu Gestaltung für kleine Betriebe." },
+  "newsletter": { "an": true, "anbieter": "mailerlite", "liste": "2", "titel": "Post aus dem Studio", "versprechen": "Einmal im Monat ein Gedanke zu Gestaltung für kleine Betriebe." },
   "termin": { "an": false, "anbieter": "google", "link": "", "text": "Kennenlernen buchen" },
-  "veroeffentlichen": { "grenze_monat": 8, "netlify_site": "" },
+  "veroeffentlichen": { "grenze_monat": 8, "netlify_site": "", "vercel_projekt": "" },
   "waechter": { "mitteilung": true }
 }

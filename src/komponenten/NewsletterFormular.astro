@@ -1,11 +1,13 @@
 ---
 import seite from '../../seite.json';
 const newsletter = seite.newsletter;
+const vercel = seite.hosting?.anbieter === 'vercel';
+const ziel = vercel ? '/api/newsletter' : '/.netlify/functions/newsletter';
 ---
 
 <p class="formular-hinweis formular-fehler" role="alert" data-formular-fehler hidden></p>
 
-<form method="POST" action="/.netlify/functions/newsletter" class="formular">
+<form method="POST" action={ziel} class="formular">
   <p class="versteckt">
     <label>Bitte leer lassen: <input name="telefon2" tabindex="-1" autocomplete="off" /></label>
   </p>

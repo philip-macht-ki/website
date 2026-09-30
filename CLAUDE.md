@@ -63,30 +63,50 @@ Menschen, wie er es einem Kunden am Telefon sagen würde, und schreib so.
 - Keine Dreiklänge ohne Not, keine überhöhten Adjektive.
 - Duzen oder Siezen: frag ihn einmal und bleib dabei.
 
+## Hosting und Newsletter: zwei Wege
+
+Philip nutzt selbst Vercel für das Hosting und MailerLite für den Newsletter,
+das ist der Standardweg (`seite.json.hosting.anbieter = "vercel"`,
+`newsletter.anbieter = "mailerlite"`). Vercel erlaubt gewerbliche Seiten erst
+im Pro-Tarif (kostenpflichtig je Person und Monat), MailerLite ist frei bis
+250 Abonnenten. Günstiger geht es mit Netlify (Free-Tarif) und Brevo (300
+Mails am Tag frei): dann trägst du `hosting.anbieter = "netlify"` und
+`newsletter.anbieter = "brevo"` ein. Beide Wege sind vollständig
+funktionsfähig, frag ihn einmal, welchen er will, und bleib dabei, bis er
+etwas anderes sagt.
+
 ## Veröffentlichen
 
 - Änderungen zeigst du lokal (`npm run dev`) oder als kostenlose Vorschau
-  (`npm run vorschau`). **Jede Veröffentlichung kostet Credits** (Netlify Free:
-  15 von 300 im Monat). Sammle Änderungen und veröffentliche gebündelt.
+  (`npm run vorschau`). Bei Netlify **kostet jede Veröffentlichung Credits**
+  (Free: 15 von 300 im Monat), bei Vercel gibt es dieses Limit nicht. Sammle
+  Änderungen trotzdem und veröffentliche gebündelt.
 - `npm run veroeffentlichen` nur, wenn er es sagt, und nur, wenn `pruefen` grün ist.
-- Der Zähler ist eine Bremse, nicht die Abrechnung: Netlify rechnet nach seinem
-  eigenen Abrechnungszeitraum und zählt auch Bandbreite. Den echten Stand sieht
-  er in Netlify unter Usage.
-- Wird die Monatsgrenze erreicht, sag es ihm und erklär die Wahl: warten bis
-  zum Monatswechsel oder bei Netlify auf einen bezahlten Tarif gehen.
+- Bei Netlify ist der Zähler eine Bremse, nicht die Abrechnung: Netlify rechnet
+  nach seinem eigenen Abrechnungszeitraum und zählt auch Bandbreite. Den echten
+  Stand sieht er in Netlify unter Usage. Wird die Monatsgrenze erreicht, sag es
+  ihm und erklär die Wahl: warten bis zum Monatswechsel oder auf einen
+  bezahlten Tarif gehen.
+- Bei Vercel zählt `veroeffentlichen` trotzdem mit, zur Übersicht, sperrt aber
+  nicht.
 
 ## Schlüssel und Konten
 
-- Schlüssel (Brevo, MailerLite) trägt er selbst bei Netlify ein. Du sagst ihm,
-  wo. Du gibst nie einen Schlüssel aus und schreibst keinen in eine Datei.
-- An DNS-Einträgen änderst du nur, was die Website betrifft (A, CNAME für www).
-  **MX- und TXT-Einträge fasst du nie an**, sonst fällt sein Postfach aus.
+- Schlüssel (MailerLite, Brevo) und das SMTP-App-Passwort fürs
+  Kontaktformular (nur bei Vercel) trägt er selbst beim Hosting-Anbieter ein.
+  Du sagst ihm, wo. Du gibst nie einen Schlüssel aus und schreibst keinen in
+  eine Datei.
+- An DNS-Einträgen änderst du nur, was die Website betrifft (die Einträge, die
+  der Hosting-Anbieter anzeigt). **MX- und TXT-Einträge fasst du nie an**,
+  sonst fällt sein Postfach aus.
 - Die alte Seite wird erst gekündigt, wenn die neue unter der Domain läuft.
 
 ## Rechtstexte
 
 `npm run rechtstexte` erzeugt Impressum (§ 5 DDG) und Datenschutz aus
-`seite.json` und den Bausteinen der Dienste, die eingeschaltet sind. Sag ihm
-jedes Mal: Das ist ein Muster und keine Rechtsberatung, lass es gegenprüfen,
-zum Beispiel mit dem kostenlosen Impressum-Generator von eRecht24 oder einem
-Anwalt. Kommt ein neuer Dienst dazu (Termin, Newsletter), erzeug die Texte neu.
+`seite.json` und den Bausteinen der Dienste, die eingeschaltet sind, passend
+zu `hosting.anbieter` (Vercel oder Netlify) und `newsletter.anbieter`
+(MailerLite oder Brevo). Sag ihm jedes Mal: Das ist ein Muster und keine
+Rechtsberatung, lass es gegenprüfen, zum Beispiel mit dem kostenlosen
+Impressum-Generator von eRecht24 oder einem Anwalt. Kommt ein neuer Dienst
+dazu (Termin, Newsletter) oder wechselt er den Anbieter, erzeug die Texte neu.

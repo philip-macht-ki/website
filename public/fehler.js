@@ -1,10 +1,10 @@
 // Blendet einen Fehlerhinweis über einem Formular ein, wenn die Adresse
-// ?fehler=1 oder ?fehler=2 trägt (siehe netlify/functions/newsletter.mjs).
-// Ohne dieses Skript bleibt das Formular voll nutzbar, es fehlt dann nur
-// dieser zusätzliche Hinweis.
+// ?fehler=1 oder ?fehler=2 trägt. Gilt für Newsletter (lib/newsletter.mjs)
+// und, auf Vercel, für Kontakt (api/kontakt.js). Ohne dieses Skript bleibt
+// das Formular voll nutzbar, es fehlt dann nur dieser zusätzliche Hinweis.
 (function () {
   var meldungen = {
-    '1': 'Bitte geben Sie eine gültige E-Mail-Adresse an und setzen Sie das Häkchen.',
+    '1': 'Bitte prüfen Sie Ihre Angaben (bei der Anmeldung auch das Häkchen) und versuchen Sie es erneut.',
     '2': 'Das hat gerade nicht geklappt. Bitte versuchen Sie es in ein paar Minuten noch einmal.',
   };
 

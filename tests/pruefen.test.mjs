@@ -122,6 +122,20 @@ test('12. Formulare: vollständig ist ok, fehlendes data-netlify wird gemeldet',
   assert.ok(pruefeFormulare(F('formulare', 'schlecht', 'dist')).length > 0);
 });
 
+test('12. Formulare (Vercel): action /api/kontakt mit Honeypot und Zeitfeld ist ok, fehlendes Zeitfeld wird gemeldet', () => {
+  const seite = { hosting: { anbieter: 'vercel' } };
+  assert.equal(pruefeFormulare(F('formulare', 'vercel-gut', 'dist'), seite).length, 0);
+  const befunde = pruefeFormulare(F('formulare', 'vercel-schlecht', 'dist'), seite);
+  assert.ok(befunde.length > 0);
+  assert.ok(befunde.some((b) => b.meldung.includes('/api/kontakt')));
+  assert.ok(befunde.some((b) => b.meldung.includes('formular_geladen')));
+});
+
+test('12. Formulare: ohne seite (Standard) verhält sich wie Netlify', () => {
+  assert.equal(pruefeFormulare(F('formulare', 'gut', 'dist'), undefined).length, 0);
+  assert.equal(pruefeFormulare(F('formulare', 'vercel-gut', 'dist'), undefined).length > 0, true);
+});
+
 test('3. Eckenradien: auch <style> in .astro, ohne Semikolon, und calc() neben var(--radius)', () => {
   const D = (n) => F('eckenradien', 'astro', n);
   const befunde = pruefeEckenradien([D('grund.css'), D('Karte.astro')]);

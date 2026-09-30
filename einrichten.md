@@ -55,7 +55,29 @@ Folge dem Abschnitt „Bevor du gestaltest“ in `CLAUDE.md`. Ergebnis ist
   ihnen sprechende Namen und `alt`-Texte.
 - Keine erzeugten Gesichter, keine Stockfotos von Menschen am Laptop.
 
-## Teil 5: Netlify (web3-1)
+## Teil 5: Hosting (web3-1)
+
+Frag ihn, welchen Weg er will, und trag die Antwort in
+`seite.json.hosting.anbieter` ein. Philip nutzt selbst Vercel, das ist der
+Standard. Günstiger geht es mit Netlify.
+
+### Vercel (Standard)
+
+1. `npx vercel login`. **Er:** bestätigt im Browser.
+2. `npx vercel link`. Das legt `.vercel/` an (liegt in `.gitignore`) und
+   verknüpft den Ordner mit einem Vercel-Projekt. Den Projektnamen trägst du
+   in `seite.json.veroeffentlichen.vercel_projekt` ein.
+3. **Er:** wechselt im Vercel-Konto auf den Pro-Tarif, weil der Free-Tarif nur
+   für private, nicht-gewerbliche Seiten gilt. Sag ihm das offen, bevor er
+   klickt.
+4. `npm run vorschau` (kostenlos, eine Vorschauadresse unter `*.vercel.app`).
+5. `npm run veroeffentlichen`, wenn er es sagt. Vercel kennt kein
+   Credit-System wie Netlify, du kannst also veröffentlichen, sooft er will,
+   ohne eine Grenze im Blick zu behalten.
+6. **Er:** trägt in Vercel unter Environment variables später die
+   SMTP-Zugangsdaten fürs Kontaktformular ein (Teil 7).
+
+### Netlify (günstigere Variante)
 
 1. `npx netlify login`. **Er:** bestätigt im Browser.
 2. `npx netlify sites:create --name <kurzer-name>`. Die Seiten-ID trägst du in
@@ -76,29 +98,39 @@ stoppt an der Grenze in `seite.json`.
 
 1. Frag, wo seine Domain liegt (IONOS, Strato, united-domains, …) und ob dort
    ein Postfach läuft.
-2. In Netlify: Domain management, Add a domain. Netlify zeigt die DNS-Werte
-   an, nimm genau diese.
-3. **Er:** trägt beim Domainanbieter die angezeigten Einträge ein (meist ein
-   A-Eintrag für die Domain selbst und ein CNAME für `www`) oder gibt dir
-   Zugang, falls der Anbieter eine Schnittstelle hat. **MX- und TXT-Einträge
-   bleiben unverändert**, sonst fällt sein Postfach aus.
-4. Warte, bis Netlify das Zertifikat ausgestellt hat (bis zu einem Tag), dann
+2. Bei Vercel: im Projekt unter Domains, Add. Bei Netlify: Domain management,
+   Add a domain. Beide zeigen dir die nötigen DNS-Werte an, nimm genau diese.
+3. **Er:** trägt beim Domainanbieter nur die dort angezeigten Einträge ein
+   (meist ein A-Eintrag für die Domain selbst und ein CNAME für `www`) oder
+   gibt dir Zugang, falls der Anbieter eine Schnittstelle hat. **MX- und
+   TXT-Einträge bleiben unverändert**, sonst fällt sein Postfach aus.
+4. Warte, bis das Zertifikat ausgestellt ist (bis zu einem Tag), dann
    `npm run waechter`.
 5. Erst jetzt darf er den alten Baukasten kündigen. Erinner ihn an die Frist.
 
 ## Teil 7: Kontakt, Newsletter, Termin (web4)
 
-- **Kontakt:** läuft mit Teil 5. Schick eine Testnachricht über die Seite und
-  prüf, ob sie ankommt.
-- **Newsletter:** frag Brevo (Standard, 300 Mails am Tag frei) oder MailerLite
-  (250 Abonnenten frei). **Er:** legt das Konto an, erstellt den Schlüssel und
-  trägt ihn bei Netlify unter Environment variables ein (`BREVO_API_KEY` oder
-  `MAILERLITE_API_KEY`). Du setzt die übrigen Werte:
-  `npx netlify env:set NEWSLETTER_ANBIETER brevo`, `NEWSLETTER_LISTE <id>`,
-  `SEITE_DOMAIN <domain>`, bei Brevo `BREVO_DOI_TEMPLATE <id>` (vorher mit ihm
-  in Brevo eine Bestätigungsvorlage für Double-Opt-in anlegen). Bei MailerLite:
-  **Er** schaltet Double-Opt-in für Anmeldungen über die Schnittstelle ein.
-  Danach `seite.json.newsletter.an = true`, `npm run rechtstexte`, Vorschau,
+- **Kontakt bei Vercel:** läuft über `api/kontakt.js`, eine eigene Funktion,
+  weil es bei Vercel keine Formularerkennung wie bei Netlify gibt. **Er:**
+  richtet in seinem eigenen Postfach ein App-Passwort ein (wie im
+  Buchhaltungskurs beschrieben) und trägt es bei Vercel unter Environment
+  variables ein: `KONTAKT_SMTP_SERVER`, `KONTAKT_SMTP_BENUTZER`,
+  `KONTAKT_SMTP_PASSWORT`, `KONTAKT_AN` (an welche Adresse die Nachrichten
+  gehen, meist seine eigene). Schick danach eine Testnachricht über die Seite
+  und prüf, ob sie ankommt.
+- **Kontakt bei Netlify:** läuft automatisch mit Teil 5 über Netlify Forms.
+  Schick eine Testnachricht über die Seite und prüf, ob sie ankommt.
+- **Newsletter:** frag MailerLite (Standard, 250 Abonnenten frei) oder, für
+  mehr kostenlos, Brevo (300 Mails am Tag frei). **Er:** legt das Konto an,
+  erstellt den Schlüssel und trägt ihn beim Hosting-Anbieter unter Environment
+  variables ein (`MAILERLITE_API_KEY` oder `BREVO_API_KEY`). Du setzt die
+  übrigen Werte (bei Vercel über die Oberfläche oder `npx vercel env add`, bei
+  Netlify `npx netlify env:set`): `NEWSLETTER_ANBIETER mailerlite` (oder
+  `brevo`), `NEWSLETTER_LISTE <id>`, `SEITE_DOMAIN <domain>`, bei Brevo
+  zusätzlich `BREVO_DOI_TEMPLATE <id>` (vorher mit ihm in Brevo eine
+  Bestätigungsvorlage für Double-Opt-in anlegen). Bei MailerLite: **Er**
+  schaltet Double-Opt-in für Anmeldungen über die Schnittstelle ein. Danach
+  `seite.json.newsletter.an = true`, `npm run rechtstexte`, Vorschau,
   Testanmeldung mit seiner eigenen Adresse bis zur Bestätigung.
 - **Termin (optional):** **Er** legt in Google Kalender einen Terminplan an
   (oder bei Cal.com) und gibt dir den Link. Du trägst ihn in

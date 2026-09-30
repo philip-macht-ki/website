@@ -84,8 +84,9 @@ export function baueDatenschutz(seite) {
     newsletter_titel: seite.newsletter?.titel || '',
   };
 
-  const bausteine = ['verantwortlicher', 'grundsaetze-und-rechte', 'hosting-netlify'];
-  if (seite.kontakt?.an) bausteine.push('kontaktformular-netlify');
+  const vercel = seite.hosting?.anbieter === 'vercel';
+  const bausteine = ['verantwortlicher', 'grundsaetze-und-rechte', vercel ? 'hosting-vercel' : 'hosting-netlify'];
+  if (seite.kontakt?.an) bausteine.push(vercel ? 'kontaktformular-eigenes-postfach' : 'kontaktformular-netlify');
   if (seite.newsletter?.an) {
     if (seite.newsletter.anbieter === 'brevo') bausteine.push('newsletter-brevo');
     else if (seite.newsletter.anbieter === 'mailerlite') bausteine.push('newsletter-mailerlite');

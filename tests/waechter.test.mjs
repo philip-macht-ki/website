@@ -141,7 +141,96 @@ test('waechter: Zähler an der Grenze wird gemeldet', async () => {
   }
 });
 
+function alleGutVercel() {
+  return {
+    fetchFn: async (adresse) => {
+      const url = adresse.toString();
+      if (url.includes('/api/newsletter')) {
+        return new Response('Method Not Allowed', { status: 405 });
+      }
+      if (url.endsWith('/kontakt') || url.endsWith('/kontakt/')) {
+        return new Response(
+          '<form name="kontakt" method="POST" action="/api/kontakt"><input name="firma-website"><input name="formular_geladen"></form>',
+          { status: 200 },
+        );
+      }
+      if (url.endsWith('/newsletter') || url.endsWith('/newsletter/')) {
+        return new Response('<form action="/api/newsletter"></form>', { status: 200 });
+      }
+      return new Response('<html>Start</html>', { status: 200 });
+    },
+    zertifikatsPruefung: async () => ({ tageBisAblauf: 60, ablauf: '2027-01-01T00:00:00Z' }),
+    mitteilung: async () => {},
+  };
+}
+
+test('waechter (Vercel): alles unauffällig ergibt ok', async () => {
+  const { ordner, pfad } = tempZaehlerPfad();
+  const erg = mkdtempSync(join(tmpdir(), 'waechter-ergebnis-'));
+  const ergebnisDatei = join(erg, 'waechter.json');
+  try {
+    const werkzeuge = alleGutVercel();
+    const ergebnis = await fuehreWaechterAus({
+      seite: seite({ hosting: { anbieter: 'vercel' } }),
+      ...werkzeuge,
+      zaehlerPfad: pfad,
+      ergebnisPfad: ergebnisDatei,
+    });
+    assert.equal(ergebnis.ok, true);
+    assert.deepEqual(ergebnis.befunde, []);
+  } finally {
+    rmSync(ordner, { recursive: true, force: true });
+    rmSync(erg, { recursive: true, force: true });
+  }
+});
+
+test('waechter (Vercel): Netlify-Formular auf Vercel-Domain wird als fehlend gemeldet', async () => {
+  const { ordner, pfad } = tempZaehlerPfad();
+  const erg = mkdtempSync(join(tmpdir(), 'waechter-ergebnis-'));
+  const ergebnisDatei = join(erg, 'waechter.json');
+  try {
+    const werkzeuge = alleGut(); // liefert das Netlify-Formular, nicht /api/kontakt
+    const ergebnis = await fuehreWaechterAus({
+      seite: seite({ hosting: { anbieter: 'vercel' } }),
+      fetchFn: werkzeuge.fetchFn,
+      zertifikatsPruefung: werkzeuge.zertifikatsPruefung,
+      mitteilung: async () => {},
+      zaehlerPfad: pfad,
+      ergebnisPfad: ergebnisDatei,
+    });
+    assert.equal(ergebnis.ok, false);
+    assert.ok(ergebnis.befunde.some((b) => b.includes('/kontakt')));
+  } finally {
+    rmSync(ordner, { recursive: true, force: true });
+    rmSync(erg, { recursive: true, force: true });
+  }
+});
+
 function aktuellerMonatFuerTest() {
   const teile = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit' }).formatToParts(new Date());
   return `${teile.find((t) => t.type === 'year').value}-${teile.find((t) => t.type === 'month').value}`;
 }
+
+test('waechter: volle Monatsgrenze ist nur bei Netlify ein Befund, bei Vercel nicht', async () => {
+  const { writeFileSync } = await import('node:fs');
+  for (const [anbieter, erwartetBefund] of [['netlify', true], ['vercel', false]]) {
+    const { ordner, pfad } = tempZaehlerPfad();
+    const erg = mkdtempSync(join(tmpdir(), 'waechter-ergebnis-'));
+    try {
+      const monat = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit' }).format(new Date());
+      writeFileSync(pfad, JSON.stringify({ [monat]: Array.from({ length: 8 }, () => '2026-01-01T00:00:00+01:00') }));
+      const s = seite();
+      s.hosting = { anbieter };
+      s.veroeffentlichen = { ...(s.veroeffentlichen || {}), grenze_monat: 8 };
+      const werkzeuge = alleGut();
+      const ergebnis = await fuehreWaechterAus({
+        seite: s, ...werkzeuge, mitteilung: async () => {}, zaehlerPfad: pfad, ergebnisPfad: join(erg, 'w.json'),
+      });
+      const grenzBefund = ergebnis.befunde.some((b) => /Grenze|Veröffentlichung/i.test(b));
+      assert.equal(grenzBefund, erwartetBefund, anbieter);
+    } finally {
+      rmSync(ordner, { recursive: true, force: true });
+      rmSync(erg, { recursive: true, force: true });
+    }
+  }
+});

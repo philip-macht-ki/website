@@ -15,6 +15,7 @@ import {
   schreibeArbeitsDatei,
   WAECHTER_ERGEBNIS_PFAD,
   jetztBerlin,
+  hostingAnbieter,
 } from './gemeinsam.mjs';
 
 /** Übersetzt technische Netzwerkfehler in einen Satz, den man versteht. */
@@ -101,15 +102,18 @@ export async function pruefeZertifikat(domain, zertifikatsPruefung = echteZertif
   }
 }
 
-export async function pruefeSeiteMitFormular(domain, pfad, formularName, fetchFn = echtesFetch) {
+/** `merkmale` ist eine Zeichenkette oder eine Liste; alle müssen im Text vorkommen. */
+export async function pruefeSeiteMitFormular(domain, pfad, merkmale, fetchFn = echtesFetch) {
+  const gesucht = Array.isArray(merkmale) ? merkmale : [merkmale];
   try {
     const antwort = await fetchFn(adresseAus(domain, pfad));
     if (antwort.status !== 200) {
       return { ok: false, meldung: `${pfad} antwortet mit Status ${antwort.status} statt 200.` };
     }
     const text = await antwort.text();
-    if (!text.includes(formularName)) {
-      return { ok: false, meldung: `${pfad} enthält nicht das erwartete Formular „${formularName}“.` };
+    const fehlend = gesucht.filter((m) => !text.includes(m));
+    if (fehlend.length) {
+      return { ok: false, meldung: `${pfad} enthält nicht das erwartete Formular („${fehlend.join('“, „')}“ fehlt).` };
     }
     return { ok: true };
   } catch (fehler) {
@@ -117,9 +121,9 @@ export async function pruefeSeiteMitFormular(domain, pfad, formularName, fetchFn
   }
 }
 
-export async function pruefeNewsletterFunktion(domain, fetchFn = echtesFetch) {
+export async function pruefeNewsletterFunktion(domain, pfad = '/.netlify/functions/newsletter', fetchFn = echtesFetch) {
   try {
-    const antwort = await fetchFn(adresseAus(domain, '/.netlify/functions/newsletter'));
+    const antwort = await fetchFn(adresseAus(domain, pfad));
     if (antwort.status !== 405) {
       return { ok: false, meldung: `Newsletter-Funktion antwortet auf GET mit Status ${antwort.status} statt 405.` };
     }
@@ -149,6 +153,7 @@ export async function fuehreWaechterAus({
   ergebnisPfad = WAECHTER_ERGEBNIS_PFAD,
 } = {}) {
   const domain = seite.domain;
+  const anbieter = hostingAnbieter(seite);
   const befunde = [];
 
   const startseite = await pruefeStartseite(domain, fetchFn);
@@ -159,20 +164,25 @@ export async function fuehreWaechterAus({
 
   // Nur prüfen, was eingeschaltet ist: ausgeschaltete Seiten baut Astro gar nicht.
   if (seite?.kontakt?.an !== false) {
-    const kontakt = await pruefeSeiteMitFormular(domain, '/kontakt', 'name="kontakt"', fetchFn);
+    const kontaktMerkmale = anbieter === 'vercel' ? ['action="/api/kontakt"', 'firma-website', 'formular_geladen'] : 'name="kontakt"';
+    const kontakt = await pruefeSeiteMitFormular(domain, '/kontakt', kontaktMerkmale, fetchFn);
     if (!kontakt.ok) befunde.push(kontakt.meldung);
   }
 
   if (seite?.newsletter?.an) {
-    const newsletterSeite = await pruefeSeiteMitFormular(domain, '/newsletter', '/.netlify/functions/newsletter', fetchFn);
+    const newsletterPfad = anbieter === 'vercel' ? '/api/newsletter' : '/.netlify/functions/newsletter';
+    const newsletterSeite = await pruefeSeiteMitFormular(domain, '/newsletter', newsletterPfad, fetchFn);
     if (!newsletterSeite.ok) befunde.push(newsletterSeite.meldung);
 
-    const newsletterFunktion = await pruefeNewsletterFunktion(domain, fetchFn);
+    const newsletterFunktion = await pruefeNewsletterFunktion(domain, newsletterPfad, fetchFn);
     if (!newsletterFunktion.ok) befunde.push(newsletterFunktion.meldung);
   }
 
-  const zaehler = pruefeZaehlerGrenze(seite, zaehlerPfad);
-  if (!zaehler.ok) befunde.push(zaehler.meldung);
+  // Die Monatsgrenze gibt es nur bei Netlify (Credits), bei Vercel zählt der Zähler nur mit.
+  if (hostingAnbieter(seite) === 'netlify') {
+    const zaehler = pruefeZaehlerGrenze(seite, zaehlerPfad);
+    if (!zaehler.ok) befunde.push(zaehler.meldung);
+  }
 
   const ergebnis = {
     zeitpunkt: jetztBerlin(),

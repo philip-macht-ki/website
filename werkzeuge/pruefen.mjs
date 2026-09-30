@@ -14,7 +14,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, extname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
-import { WURZEL, leseSeiteJson, zeile, SEITE_JSON_PFAD } from './gemeinsam.mjs';
+import { WURZEL, leseSeiteJson, zeile, SEITE_JSON_PFAD, hostingAnbieter } from './gemeinsam.mjs';
 
 const INHALT_DIR = join(WURZEL, 'inhalt');
 const DIST_DIR = join(WURZEL, 'dist');
@@ -473,7 +473,8 @@ export function pruefeInterneLinks(distOrdner = DIST_DIR) {
 // 12. Formulare: Kontakt data-netlify + Honeypot, Newsletter Einwilligung
 // ---------------------------------------------------------------------------
 
-export function pruefeFormulare(distOrdner = DIST_DIR) {
+export function pruefeFormulare(distOrdner = DIST_DIR, seite) {
+  const anbieter = hostingAnbieter(seite);
   const befunde = [];
   const kontaktDatei = join(distOrdner, 'kontakt', 'index.html');
   const kontaktAlt = join(distOrdner, 'kontakt.html');
@@ -484,7 +485,17 @@ export function pruefeFormulare(distOrdner = DIST_DIR) {
     const text = readFileSync(kontaktPfad, 'utf8');
     const formular = text.match(/<form[^>]*name="kontakt"[\s\S]*?<\/form>/i);
     if (!formular) {
-      befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular (name="kontakt") nicht gefunden.', satz: 'Prüfe das Kontaktformular in src/pages/kontakt.astro.' });
+      befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular (name="kontakt") nicht gefunden.', satz: 'Prüfe das Kontaktformular in src/komponenten/KontaktFormular.astro.' });
+    } else if (anbieter === 'vercel') {
+      if (!/action\s*=\s*["']\/api\/kontakt["']/i.test(formular[0])) {
+        befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular zeigt nicht auf /api/kontakt.', satz: 'Setze action="/api/kontakt" am Kontaktformular (Vercel hat keine Netlify Forms).' });
+      }
+      if (!/<input[^>]*name="firma-website"/i.test(formular[0])) {
+        befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular hat kein Honeypot-Feld firma-website.', satz: 'Ergänze das versteckte Feld firma-website.' });
+      }
+      if (!/<input[^>]*name="formular_geladen"/i.test(formular[0])) {
+        befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular hat kein Zeitfeld formular_geladen.', satz: 'Ergänze das versteckte Feld formular_geladen und public/formular-zeit.js, sonst kommt jede Nachricht mit dem Zusatz ohne Zeitprüfung an.' });
+      }
     } else {
       if (!/data-netlify\s*=\s*["']true["']/i.test(formular[0])) {
         befunde.push({ datei: relPfad(kontaktPfad), meldung: 'Kontaktformular hat kein data-netlify="true".', satz: 'Ergänze data-netlify="true" am Kontaktformular.' });
@@ -501,10 +512,12 @@ export function pruefeFormulare(distOrdner = DIST_DIR) {
   const newsletterAlt = join(distOrdner, 'newsletter.html');
   const newsletterPfad = existsSync(newsletterDatei) ? newsletterDatei : newsletterAlt;
   if (existsSync(newsletterPfad)) {
+    const newsletterAktion = anbieter === 'vercel' ? '/api/newsletter' : '/.netlify/functions/newsletter';
     const text = readFileSync(newsletterPfad, 'utf8');
-    const formular = text.match(/<form[^>]*action="\/\.netlify\/functions\/newsletter"[\s\S]*?<\/form>/i);
+    const formularMuster = new RegExp(`<form[^>]*action="${newsletterAktion.replace(/\//g, '\\/')}"[\\s\\S]*?<\\/form>`, 'i');
+    const formular = text.match(formularMuster);
     if (!formular) {
-      befunde.push({ datei: relPfad(newsletterPfad), meldung: 'Newsletter-Formular nicht gefunden.', satz: 'Prüfe das Formular in src/pages/newsletter.astro.' });
+      befunde.push({ datei: relPfad(newsletterPfad), meldung: `Newsletter-Formular zeigt nicht auf ${newsletterAktion}.`, satz: 'Prüfe das Formular in src/komponenten/NewsletterFormular.astro und seite.json.hosting.anbieter.' });
     } else if (!/<input[^>]*name="einwilligung"[^>]*required/i.test(formular[0])) {
       befunde.push({ datei: relPfad(newsletterPfad), meldung: 'Newsletter-Formular hat kein Pflicht-Häkchen für die Einwilligung.', satz: 'Ergänze das Häkchen einwilligung mit required und Datenschutztext.' });
     }
@@ -528,7 +541,7 @@ export const ALLE_PRUEFUNGEN = [
   { nummer: 9, name: 'Floskeln', lauf: () => pruefeFloskeln() },
   { nummer: 10, name: 'Rechtstexte', lauf: (seite) => pruefeRechtstexte(INHALT_DIR, seite) },
   { nummer: 11, name: 'Interne Links', lauf: () => pruefeInterneLinks() },
-  { nummer: 12, name: 'Formulare', lauf: () => pruefeFormulare() },
+  { nummer: 12, name: 'Formulare', lauf: (seite) => pruefeFormulare(DIST_DIR, seite) },
 ];
 
 async function hauptlauf() {

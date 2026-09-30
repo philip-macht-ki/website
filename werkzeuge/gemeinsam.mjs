@@ -48,6 +48,11 @@ export function leseSeiteJson(pfad = SEITE_JSON_PFAD) {
   }
 }
 
+/** Anbieter aus seite.json.hosting.anbieter: "vercel" oder "netlify" (Standard, auch wenn das Feld fehlt). */
+export function hostingAnbieter(seite) {
+  return seite?.hosting?.anbieter === 'vercel' ? 'vercel' : 'netlify';
+}
+
 /** Aktueller Monat als "YYYY-MM" in Europe/Berlin, oder für ein gegebenes Datum. */
 export function aktuellerMonat(datum = new Date()) {
   const teile = new Intl.DateTimeFormat('en-CA', {
