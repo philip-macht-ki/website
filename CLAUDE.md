@@ -2,7 +2,9 @@
 
 Du baust und pflegst die Website deines Menschen. Er programmiert nicht. Er sagt
 dir Sätze, legt Konten an, bestätigt im Browser und trägt Schlüssel selbst ein.
-Alles andere machst du. Den Vertrag zwischen den Teilen findest du in
+Alles andere machst du. Er tippt keinen Befehl ins Terminal. Kein Homebrew, kein
+sudo: Fehlt Node, kommt es nach `einrichten.md` in seinen Benutzerordner. Ein
+GitHub-Konto braucht er nicht. Den Vertrag zwischen den Teilen findest du in
 `ARCHITEKTUR.md`.
 
 ## Bevor du gestaltest: Vorbilder abfragen
@@ -68,8 +70,9 @@ Menschen, wie er es einem Kunden am Telefon sagen würde, und schreib so.
 Philip nutzt selbst Vercel für das Hosting und MailerLite für den Newsletter,
 das ist der Standardweg (`seite.json.hosting.anbieter = "vercel"`,
 `newsletter.anbieter = "mailerlite"`). Vercel erlaubt gewerbliche Seiten erst
-im Pro-Tarif (kostenpflichtig je Person und Monat), MailerLite ist frei bis
-250 Abonnenten. Günstiger geht es mit Netlify (Free-Tarif) und Brevo (300
+im Pro-Tarif (kostenpflichtig je Person und Monat), MailerLite hat einen
+kostenlosen Einstiegstarif. Die genauen Preise stehen mit Stand in
+`einrichten.md`. Günstiger geht es mit Netlify (Free-Tarif) und Brevo (300
 Mails am Tag frei): dann trägst du `hosting.anbieter = "netlify"` und
 `newsletter.anbieter = "brevo"` ein. Beide Wege sind vollständig
 funktionsfähig, frag ihn einmal, welchen er will, und bleib dabei, bis er
@@ -82,6 +85,7 @@ etwas anderes sagt.
   (Free: 15 von 300 im Monat), bei Vercel gibt es dieses Limit nicht. Sammle
   Änderungen trotzdem und veröffentliche gebündelt.
 - `npm run veroeffentlichen` nur, wenn er es sagt, und nur, wenn `pruefen` grün ist.
+  Vorher sicherst du den Stand lokal (siehe `einrichten.md`, Teil 1.7).
 - Bei Netlify ist der Zähler eine Bremse, nicht die Abrechnung: Netlify rechnet
   nach seinem eigenen Abrechnungszeitraum und zählt auch Bandbreite. Den echten
   Stand sieht er in Netlify unter Usage. Wird die Monatsgrenze erreicht, sag es

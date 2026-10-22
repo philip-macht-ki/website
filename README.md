@@ -10,17 +10,19 @@ bau mir daraus meine Website.
 
 ## Was du brauchst
 
-- Einen Computer mit Claude Code.
-- Ein Konto beim Hosting-Anbieter: Vercel (Standard, für gewerbliche Seiten
-  der kostenpflichtige Pro-Tarif) oder, günstiger, Netlify (kostenloser
-  Free-Tarif).
-- Eine eigene Domain (kann später dazukommen).
-- Falls gewünscht: ein Konto bei MailerLite (Standard, frei bis 250
-  Abonnenten) oder, für mehr kostenlos, Brevo (300 Mails am Tag frei) für den
-  Newsletter.
+- Einen Mac mit der Claude-App (Code-Tab) und deinem Claude-Abo.
+- Ein Konto beim Hosting-Anbieter, nur mit deiner E-Mail-Adresse, ohne
+  GitHub: Vercel (Standard, für gewerbliche Seiten der Pro-Tarif, Stand
+  Oktober 2026 20 US-Dollar im Monat plus Steuer) oder, günstiger, Netlify
+  (kostenloser Free-Tarif mit 300 Credits im Monat).
+- Eine eigene Domain.
+- Später, falls gewünscht: ein App-Passwort deines Postfachs für das
+  Kontaktformular und ein Konto bei MailerLite oder Brevo für den Newsletter.
 
-Alles Weitere, Konten anlegen, Schlüssel eintragen, im Browser bestätigen,
-macht dein Claude mit dir zusammen, Schritt für Schritt.
+Kein Homebrew, kein Admin-Passwort, kein Befehl zum Abtippen. Was fehlt,
+installiert dein Claude in deinen Benutzerordner. Konten anlegen, im Browser
+bestätigen und bezahlen machst du selbst, Schritt für Schritt mit deinem
+Claude. Die Reihenfolge steht in `einrichten.md`.
 
 ## Wie die Seite gebaut ist
 
