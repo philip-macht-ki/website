@@ -225,7 +225,8 @@ Vercel hat keine Netlify-Forms-Entsprechung. `api/kontakt.js` schickt die
 Nachricht deshalb per SMTP aus dem **eigenen Postfach des Mitglieds an sich
 selbst**, genau wie im Buchhaltungskurs: App-Passwort, Umgebungsvariablen
 `KONTAKT_SMTP_SERVER`, `KONTAKT_SMTP_BENUTZER`, `KONTAKT_SMTP_PASSWORT`,
-`KONTAKT_AN` (Ziel-Adresse), optional `KONTAKT_SMTP_PORT` (Standard 465).
+`KONTAKT_AN` (Ziel-Adresse), optional `KONTAKT_SMTP_PORT` (Standard 465) und
+`KONTAKT_ABSENDER` (Absender, wenn er nicht der SMTP-Benutzer ist, etwa bei Brevo).
 Abhängigkeit: `nodemailer`.
 
 - Nur POST. Honeypot-Feld `firma-website` gefüllt → 303 auf `/kontakt-danke`

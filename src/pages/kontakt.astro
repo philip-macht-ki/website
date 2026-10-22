@@ -1,12 +1,17 @@
 ---
 import Grundlage from '../layouts/Grundlage.astro';
 import KontaktFormular from '../komponenten/KontaktFormular.astro';
+import seite from '../../seite.json';
 
 const dateien = import.meta.glob('../../inhalt/*.md', { eager: true }) as Record<
   string,
   { frontmatter: any }
 >;
 const seiteInhalt = dateien['../../inhalt/kontakt.md'].frontmatter;
+// Ohne eingeschaltetes Formular (Teil 1 des Kurses, noch kein Postfach
+// verbunden) steht hier die E-Mail-Adresse statt eines Formulars, das
+// ins Leere schicken würde.
+const formular = seite.kontakt?.an !== false;
 ---
 
 <Grundlage titel={seiteInhalt.titel} beschreibung={seiteInhalt.beschreibung}>
@@ -14,7 +19,19 @@ const seiteInhalt = dateien['../../inhalt/kontakt.md'].frontmatter;
     <div class="container einstieg-schmal-innen">
       <h1>{seiteInhalt.ueberschrift}</h1>
       <p class="text-schwach">{seiteInhalt.text}</p>
-      <KontaktFormular />
+      {formular ? (
+        <KontaktFormular />
+      ) : (
+        <p class="kontakt-direkt">
+          <a href={`mailto:${seite.email}`}>{seite.email}</a>
+          {seite.telefon && (
+            <>
+              <br />
+              <a href={`tel:${seite.telefon.replace(/[^+0-9]/g, '')}`}>{seite.telefon}</a>
+            </>
+          )}
+        </p>
+      )}
     </div>
   </section>
 </Grundlage>
@@ -27,5 +44,8 @@ const seiteInhalt = dateien['../../inhalt/kontakt.md'].frontmatter;
     display: grid;
     gap: var(--raum-m);
     max-width: 36rem;
+  }
+  .kontakt-direkt {
+    font-size: 1.25rem;
   }
 </style>
