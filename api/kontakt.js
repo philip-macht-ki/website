@@ -121,7 +121,9 @@ export async function behandleAnfrage(req, { env = process.env, transportErzeuge
       auth: { user: env.KONTAKT_SMTP_BENUTZER, pass: env.KONTAKT_SMTP_PASSWORT },
     });
     await transport.sendMail({
-      from: env.KONTAKT_SMTP_BENUTZER,
+      // Bei Versanddiensten wie Brevo ist der Benutzer eine Login-Adresse,
+      // als Absender gilt dann die dort bestätigte Adresse.
+      from: String(env.KONTAKT_ABSENDER ?? '').trim() || env.KONTAKT_SMTP_BENUTZER,
       to: env.KONTAKT_AN,
       replyTo: email,
       subject: `Neue Nachricht über das Kontaktformular von ${name}${

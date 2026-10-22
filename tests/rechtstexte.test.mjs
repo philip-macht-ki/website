@@ -70,3 +70,12 @@ test('Datenschutz und Impressum enthalten kein "TMG"', () => {
   assert.ok(!baueImpressum(SEITE_VOLLSTAENDIG).text.includes('TMG'));
   assert.ok(!baueDatenschutz(SEITE_VOLLSTAENDIG).text.includes('TMG'));
 });
+
+test('Datenschutz: Kontakt über Brevo nennt Brevo als Versanddienst, sonst das eigene Postfach', () => {
+  const vercel = { ...SEITE_VOLLSTAENDIG, hosting: { anbieter: 'vercel' }, newsletter: { an: false } };
+  const eigen = baueDatenschutz(vercel).text;
+  const brevo = baueDatenschutz({ ...vercel, kontakt: { an: true, versand: 'brevo' } }).text;
+  assert.ok(!eigen.includes('Brevo'));
+  assert.ok(brevo.includes('Brevo'));
+  assert.ok(brevo.includes('Kontaktformular'));
+});

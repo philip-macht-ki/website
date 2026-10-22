@@ -86,7 +86,10 @@ export function baueDatenschutz(seite) {
 
   const vercel = seite.hosting?.anbieter === 'vercel';
   const bausteine = ['verantwortlicher', 'grundsaetze-und-rechte', vercel ? 'hosting-vercel' : 'hosting-netlify'];
-  if (seite.kontakt?.an) bausteine.push(vercel ? 'kontaktformular-eigenes-postfach' : 'kontaktformular-netlify');
+  // kontakt.versand = "brevo": bei Vercel verschickt Brevo statt des eigenen
+  // Postfachs, etwa für Postfächer bei Microsoft (einrichten.md, 3.5).
+  const kontaktBaustein = !vercel ? 'kontaktformular-netlify' : seite.kontakt?.versand === 'brevo' ? 'kontaktformular-brevo' : 'kontaktformular-eigenes-postfach';
+  if (seite.kontakt?.an) bausteine.push(kontaktBaustein);
   if (seite.newsletter?.an) {
     if (seite.newsletter.anbieter === 'brevo') bausteine.push('newsletter-brevo');
     else if (seite.newsletter.anbieter === 'mailerlite') bausteine.push('newsletter-mailerlite');

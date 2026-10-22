@@ -117,6 +117,15 @@ test('kontakt: ohne Zeitfeld (kein JavaScript) geht die Nachricht trotzdem raus,
   assert.match(betreff, /ohne Zeitprüfung/);
 });
 
+test('kontakt: KONTAKT_ABSENDER ersetzt den SMTP-Benutzer als Absender, sonst bleibt er es', async () => {
+  const absender = [];
+  const transportErzeugen = () => ({ sendMail: async (m) => { absender.push(m.from); } });
+  const felder = { name: 'Anna', email: 'anna@example.org', nachricht: 'Hallo' };
+  await behandleKontakt(formAnfrage('/api/kontakt', felder), { env: KONTAKT_ENV, transportErzeugen });
+  await behandleKontakt(formAnfrage('/api/kontakt', felder), { env: { ...KONTAKT_ENV, KONTAKT_ABSENDER: 'hallo@studio-beispiel.example' }, transportErzeugen });
+  assert.deepEqual(absender, [KONTAKT_ENV.KONTAKT_SMTP_BENUTZER, 'hallo@studio-beispiel.example']);
+});
+
 test('kontakt: Honeypot gefüllt verschickt keine Mail, still zur Danke-Seite', async () => {
   let versendet = false;
   const transportErzeugen = () => ({ sendMail: async () => { versendet = true; } });

@@ -226,7 +226,7 @@ Schalte `seite.json.kontakt.an = true`, `npm run rechtstexte`.
 | Strato | smtp.strato.de | 465 | Passwort der Mailadresse |
 | Posteo | posteo.de | 465 | mit Zusatzschutz App-Passwort |
 | mailbox.org | smtp.mailbox.org | 465 | mit Zwei-Faktor Anwendungspasswort |
-| Outlook.com, Microsoft 365 | – | – | geht nicht zuverlässig, Microsoft schaltet den Weg ab. Netlify Forms oder ein anderes Postfach |
+| Outlook.com, Microsoft 365 | – | – | geht nicht zuverlässig, Microsoft schaltet den Weg ab. Weg über Brevo (3.5), Netlify Forms oder ein anderes Postfach |
 
 Stand Oktober 2026. Prüf den Server kurz beim Anbieter, bevor du ihn einträgst.
 
@@ -278,3 +278,89 @@ ausgeschrieben) und lade ihn (`launchctl bootstrap gui/$(id -u) …`). Test:
 `npm run waechter`. Häng danach, wenn der Mitgliederbereich es anbietet, ein
 Lebenszeichen an den Lauf, damit er eine Mail bekommt, wenn der Wächter
 ausbleibt.
+
+## 3.5 Kontaktformular über Brevo (web9-2, optional)
+
+Für Postfächer bei Outlook.com oder Microsoft 365, oder wenn sein Anbieter den
+Versand mit App-Passwort nicht erlaubt. Brevo verschickt die Nachrichten, sie
+kommen trotzdem in seinem eigenen Postfach an. Stand Oktober 2026 kostenlos bis
+300 Mails am Tag.
+
+1. **Er:** legt ein Brevo-Konto an (falls nicht schon für den Newsletter) und
+   bestätigt seine Absenderadresse: oben rechts sein Name, Senders, Domains &
+   Dedicated IPs, Reiter Senders, Add a sender, dann den Link in der Mail.
+   Brevo gibt Neukonten erst nach einer kurzen Prüfung frei.
+2. Optional, damit die Nachrichten nicht im Spam landen: unter Domains seine
+   Domain authentifizieren. Brevo zeigt dafür **neue** TXT-Einträge an. Die
+   kommen dazu, bestehende MX- und TXT-Einträge bleiben unverändert.
+3. **Er:** erzeugt den SMTP-Schlüssel: SMTP & API, Reiter SMTP, Generate a new
+   SMTP key. Der Login steht auf derselben Seite.
+4. Du setzt: `KONTAKT_SMTP_SERVER smtp-relay.brevo.com`, `KONTAKT_SMTP_PORT 587`,
+   `KONTAKT_SMTP_BENUTZER <Login von der Seite>`, `KONTAKT_ABSENDER <bestätigte
+   Absenderadresse>`, `KONTAKT_AN <seine Adresse>`.
+5. **Er:** trägt den SMTP-Schlüssel selbst als `KONTAKT_SMTP_PASSWORT` bei
+   Vercel ein (Settings, Environment Variables, wie in 3.1).
+6. `seite.json.kontakt.versand = "brevo"`, dann `npm run rechtstexte` (der
+   Datenschutztext nennt Brevo als Versanddienst, Prüfstelle mit ihm
+   durchgehen), neu veröffentlichen, Testnachricht.
+
+## 3.6 Sicherung bei GitHub (web9-1, optional)
+
+Für alle, die zusätzlich eine Sicherung außer Haus wollen. Nicht nötig für den
+Betrieb der Seite.
+
+1. Prüf, ob `git` antwortet (`git --version`). Öffnet macOS stattdessen den
+   Dialog für die Entwicklerwerkzeuge, sag ihm das in einem Satz: **Er** klickt
+   Installieren. Fragt macOS nach einem Passwort, ist es das Passwort, mit dem
+   er sich am Mac anmeldet. Er tippt es selbst in das Fenster, nie in den Chat.
+2. **Er:** legt ein kostenloses Konto auf github.com an (Sign up, E-Mail,
+   Bestätigungscode).
+3. `gh` ohne Homebrew: lade das offizielle Archiv für macOS von
+   github.com/cli/cli/releases nach `~/.local/gh` und häng `~/.local/gh/bin` an
+   den PATH wie bei Node. Dann `gh auth login --web`. **Er:** bestätigt den
+   Code im Browser.
+4. `gh repo create meine-website --private --source . --push`. Vorher prüfst
+   du, dass `.vercel/`, `.env` und `node_modules` in `.gitignore` stehen.
+5. Ab jetzt committest und pushst du vor jeder Veröffentlichung. Zurück geht es
+   dann auch über die Historie: Stand heraussuchen, ihm zeigen, auf sein Wort
+   zurückholen und veröffentlichen.
+
+## 3.7 Domain-Einträge über die Schnittstelle des Anbieters (web9-3, optional)
+
+Statt dass er die Einträge selbst setzt, setzt du sie, mit einem Schlüssel, den
+**er** selbst im Schlüsselbund ablegt. Du siehst den Schlüssel nie, druckst ihn
+nie und schreibst ihn in keine Datei.
+
+Geht bei Anbietern mit Schnittstelle, Stand Oktober 2026 zum Beispiel IONOS,
+Cloudflare, INWX und Hetzner. Strato und united-domains haben keine, dort bleibt
+es beim Weg aus 1.6. Lies vor dem ersten Aufruf die aktuelle Doku des
+Anbieters.
+
+1. **Er:** erzeugt beim Anbieter einen Schlüssel nur für DNS, so eng wie
+   möglich (bei Cloudflare ein Token nur für diese eine Zone mit „DNS
+   bearbeiten“). Bei IONOS im Entwicklerbereich (developer.hosting.ionos.de)
+   unter API-Keys.
+2. Du öffnest ein Mac-Fenster mit verdecktem Feld. Kündige es vorher an. Der
+   Wert geht direkt in den Schlüsselbund:
+
+   ```sh
+   osascript -e 'tell application "System Events" to activate' \
+     -e 'text returned of (display dialog "Füge hier den Schlüssel deines Domainanbieters ein." default answer "" with hidden answer buttons {"Abbrechen", "Sichern"} default button 2)' \
+     | { IFS= read -r k; security add-generic-password -U -s website-dns -a <anbieter> -w "$k"; }
+   ```
+
+3. Lesen nur innerhalb eines Befehls, nie mit Ausgabe, z. B. IONOS:
+
+   ```sh
+   SCHLUESSEL=$(security find-generic-password -s website-dns -a ionos -w)
+   curl -fsS -H "X-API-Key: $SCHLUESSEL" https://api.hosting.ionos.com/dns/v1/zones
+   ```
+
+4. **Erst Trockenlauf:** Zeig ihm die Einträge, die du setzen willst (Art,
+   Name, Wert), und die bestehenden MX- und TXT-Einträge, die unverändert
+   bleiben. Erst auf sein Ja setzt du nur die Einträge, die Vercel angezeigt
+   hat. MX und TXT fasst du nie an, auch nicht zum Aufräumen.
+5. Danach weiter wie in 1.6 ab Schritt 5. Braucht er den Schlüssel nicht mehr,
+   löscht er ihn beim Anbieter, und du entfernst ihn mit
+   `security delete-generic-password -s website-dns -a <anbieter>`.
+
