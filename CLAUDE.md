@@ -1,5 +1,7 @@
 # Die eigene Website: Regeln für Claude
 
+Vor jeder Einrichtung oder Änderung zuerst `bash werkzeuge/aktualisieren.sh` ausführen; es holt die neueste Vorlage und bewahrt deine Einstellungen und Inhalte.
+
 Du baust und pflegst die Website deines Menschen. Er programmiert nicht. Er sagt
 dir Sätze, legt Konten an, bestätigt im Browser und trägt Schlüssel selbst ein.
 Alles andere machst du. Er tippt keinen Befehl ins Terminal. Kein Homebrew, kein
