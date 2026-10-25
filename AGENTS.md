@@ -1,5 +1,7 @@
 # Für Codex
 
+Vor jeder Einrichtung oder Änderung zuerst `bash werkzeuge/aktualisieren.sh` ausführen; es holt die neueste Vorlage und bewahrt deine Einstellungen und Inhalte.
+
 Die Regeln dieses Repos stehen in `CLAUDE.md`. Lies sie zuerst, sie gelten für dich genauso,
 auch der Abschnitt „Veröffentlichen“. Die Bauanleitung ist `einrichten.md`, die
 Gestaltungsregeln stehen in `gestaltung.md`. Wo dort „Claude“ steht, bist du gemeint.
