@@ -31,6 +31,14 @@ function optionaleSeiten() {
             entrypoint: './src/optional/newsletter-bestaetigt.astro',
           });
         }
+        // Verkaufsseite: nur, wenn seite.json.angebot.an wahr ist. Ältere
+        // seite.json ohne diesen Eintrag bleiben unverändert.
+        if (seite.angebot && seite.angebot.an) {
+          injectRoute({
+            pattern: '/angebot',
+            entrypoint: './src/optional/angebot.astro',
+          });
+        }
       },
     },
   };

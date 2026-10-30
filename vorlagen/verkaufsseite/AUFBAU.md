@@ -1,6 +1,14 @@
 # Aufbau einer Verkaufsseite
 
-Diese Datei beschreibt den Aufbau von `inhalt/angebot.md`. Die Seite führt auf eine Kasse. Sie verkauft nicht selbst.
+Diese Datei beschreibt den Aufbau der Verkaufsseite. Die Seite führt auf eine Kasse. Sie verkauft nicht selbst.
+
+## So kommt die Seite in deine Website
+
+Die Seite liegt, wie die Newsletter-Seiten, in `src/optional/` bereit und ist erst da, wenn du sie einschaltest:
+
+1. `vorlagen/verkaufsseite/angebot.md` nach `inhalt/angebot.md` kopieren und mit deinem Angebot füllen. Der Muster-Inhalt (Studio Beispiel, Logo-Paket) wird vollständig ersetzt.
+2. In `seite.json` den Eintrag `"angebot": { "an": true }` setzen (fehlt er, ergänzen).
+3. Bei Bedarf unter `navigation` den Eintrag `angebot` ergänzen.
 
 ## Reihenfolge der Abschnitte
 

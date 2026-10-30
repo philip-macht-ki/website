@@ -22,6 +22,7 @@
   "hosting": { "anbieter": "vercel" },
   "kontakt": { "an": true, "benachrichtigung": "hallo@studio-beispiel.example" },
   "newsletter": { "an": true, "anbieter": "mailerlite", "liste": "2", "titel": "Post aus dem Studio", "versprechen": "Einmal im Monat ein Gedanke zu Gestaltung für kleine Betriebe." },
+  "angebot": { "an": false },
   "termin": { "an": false, "anbieter": "google", "link": "", "text": "Kennenlernen buchen" },
   "veroeffentlichen": { "grenze_monat": 8, "netlify_site": "", "vercel_projekt": "" },
   "waechter": { "mitteilung": true }
