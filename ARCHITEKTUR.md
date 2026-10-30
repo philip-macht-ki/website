@@ -64,7 +64,7 @@ src/
                           seite.json.hosting.anbieter
   pages/                  index, leistungen, ueber-mich, kontakt, kontakt-danke,
                           impressum, datenschutz, 404
-  optional/               newsletter, newsletter-danke, newsletter-bestaetigt; liegen
+  optional/               newsletter, newsletter-danke, newsletter-bestaetigt, angebot; liegen
                           außerhalb von pages/ und werden in astro.config.mjs per
                           injectRoute nur eingehängt, wenn seite.json.newsletter.an
                           wahr ist, ohne Dateien verschieben zu müssen
