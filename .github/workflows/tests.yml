@@ -1,0 +1,32 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: PowerShell-Skripte einlesen
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          $fehler = 0
+          Get-ChildItem -Recurse -Filter *.ps1 -Exclude node_modules | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object {
+            $e = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$e)
+            if ($e) { Write-Host "FEHLER $($_.Name): $($e[0].Message)"; $fehler++ } else { Write-Host "ok $($_.Name)" }
+          }
+          exit $fehler
+      - name: Aufgabe trocken bauen
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: ./werkzeuge/aufgabe-anlegen.ps1 -Name "Test Wächter" -Werte @{ NODE_PFAD = (Get-Command node).Source; PROJEKT_PFAD = "C:\Pfad mit Leerzeichen & Zeichen'"; BENUTZER = (whoami) } -Trocken | Out-String | Set-Content aufgabe.xml; [xml](Get-Content -Raw aufgabe.xml) | Out-Null; Write-Host "XML gueltig"
