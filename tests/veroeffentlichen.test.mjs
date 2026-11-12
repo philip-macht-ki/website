@@ -190,7 +190,8 @@ test('veroeffentlichen (Vercel): die Monatsgrenze sperrt nicht, es wird vercel d
         pruefen: () => true,
       });
       assert.equal(ergebnis.veroeffentlicht, true);
-      assert.ok(erhalteneArgs.includes('vercel'));
+      assert.match(erhalteneArgs[0], /vercel[\\/]dist[\\/]index\.js$/);
+      assert.equal(erhalteneArgs[1], 'deploy');
       assert.ok(erhalteneArgs.includes('--prod'));
       const zaehler = leseZaehler(pfad);
       assert.equal(zaehler['2026-10'].length, 21);

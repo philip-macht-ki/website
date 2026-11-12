@@ -120,7 +120,7 @@ export function fuehreVeroeffentlichungAus({
     const projekt = seite?.veroeffentlichen?.vercel_projekt;
     const args = ['vercel', 'deploy', '--prod', '--yes'];
     if (projekt) args.push('--name', projekt);
-    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'vercel', 'dist', 'index.js'), ...args]);
+    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'vercel', 'dist', 'index.js'), ...args.slice(1)]);
     if (erkenneNichtVerknuepftVercel(ausgabe)) {
       zeile('fehler', 'Diese Seite ist noch nicht mit Vercel verknüpft oder nicht eingeloggt.', 'Führe npx vercel login und danach npx vercel link aus (Teil 5 in einrichten.md).');
       return { veroeffentlicht: false, grund: 'nicht-verknuepft' };
@@ -133,7 +133,7 @@ export function fuehreVeroeffentlichungAus({
     const netlifySite = seite?.veroeffentlichen?.netlify_site;
     const args = ['netlify', 'deploy', '--prod', '--dir', 'dist'];
     if (netlifySite) args.push('--site', netlifySite);
-    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'netlify-cli', 'bin', 'run.js'), ...args]);
+    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'netlify-cli', 'bin', 'run.js'), ...args.slice(1)]);
     if (erkenneNichtVerknuepft(ausgabe)) {
       zeile('fehler', 'Diese Seite ist noch nicht mit Netlify verknüpft oder nicht eingeloggt.', 'Verbinde die Seite mit Netlify (Lektion web3-1).');
       return { veroeffentlicht: false, grund: 'nicht-verknuepft' };

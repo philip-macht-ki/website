@@ -54,7 +54,7 @@ export function fuehreVorschauAus({ seite, ausfuehren = echtAusfuehren, pruefen 
     const projekt = seite?.veroeffentlichen?.vercel_projekt;
     const args = ['vercel', 'deploy', '--yes'];
     if (projekt) args.push('--name', projekt);
-    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'vercel', 'dist', 'index.js'), ...args]);
+    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'vercel', 'dist', 'index.js'), ...args.slice(1)]);
     const text = `${ausgabe.stdout || ''}${ausgabe.stderr || ''}`.toLowerCase();
     if (nichtVerknuepftVercel(text)) {
       zeile('fehler', 'Diese Seite ist noch nicht mit Vercel verknüpft oder nicht eingeloggt.', 'Führe npx vercel login und danach npx vercel link aus (Teil 5 in einrichten.md).');
@@ -68,7 +68,7 @@ export function fuehreVorschauAus({ seite, ausfuehren = echtAusfuehren, pruefen 
     const netlifySite = seite?.veroeffentlichen?.netlify_site;
     const args = ['netlify', 'deploy', '--dir', 'dist'];
     if (netlifySite) args.push('--site', netlifySite);
-    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'netlify-cli', 'bin', 'run.js'), ...args]);
+    ausgabe = ausfuehren(process.execPath, [join(WURZEL, 'node_modules', 'netlify-cli', 'bin', 'run.js'), ...args.slice(1)]);
     const text = `${ausgabe.stdout || ''}${ausgabe.stderr || ''}`.toLowerCase();
     if (text.includes('not linked') || text.includes('not logged in') || text.includes('please run `netlify link`')) {
       zeile('fehler', 'Diese Seite ist noch nicht mit Netlify verknüpft oder nicht eingeloggt.', 'Verbinde die Seite mit Netlify (Lektion web3-1).');
