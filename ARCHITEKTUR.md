@@ -1,4 +1,4 @@
-# Architektur
+﻿# Architektur
 
 Diese Datei ist der Vertrag zwischen den Teilen. Wer ein Format ändert, ändert
 es hier zuerst.
@@ -51,10 +51,12 @@ und `npm run veroeffentlichen` verhalten sich wie auf dem Mac.
 
 Für den wöchentlichen Wächter gibt es
 `zeitplan/de.eigene-website.waechter.windows.xml.vorlage`. Die Vorlage richtet
-mit `schtasks` eine Aufgabe für montags 08:30 ein, nur für den angemeldeten
-Benutzer und mit Nachholen eines verpassten Laufs. Details stehen in
-`einrichten.md`. Der Wächter prüft ausschließlich die öffentliche Seite und
-kann deshalb alternativ als Cloud-Routine von Claude laufen.
+über `werkzeuge/aufgabe-anlegen.ps1` eine Aufgabe für montags 08:30 ein, nur
+für den angemeldeten Benutzer und mit Nachholen eines verpassten Laufs. Das
+Skript ersetzt die XML-Platzhalter sicher und registriert die Aufgabe direkt;
+`-Trocken` gibt das fertige XML aus, `-Entfernen` entfernt die Aufgabe. Details
+stehen in `einrichten.md`. Der Wächter prüft ausschließlich die öffentliche
+Seite und kann deshalb alternativ als Cloud-Routine von Claude laufen.
 
 ## Ordner
 
@@ -99,7 +101,7 @@ vercel.json                Build, Ausgabeordner, Sicherheits-Header, cleanUrls (
 werkzeuge/                Node-Skripte ohne Build, aufgerufen über npm run
   pruefen.mjs  veroeffentlichen.mjs  vorschau.mjs  waechter.mjs  rechtstexte.mjs
   gemeinsam.mjs           seite.json lesen, Ausgabezeilen, Monatszähler, hostingAnbieter()
-zeitplan/                 launchd-Vorlage für den Wächter
+zeitplan/                 launchd- und Windows-Aufgabenplanungs-Vorlagen für den Wächter
 arbeit/                   Laufzeit, nie im Git (.gitignore): veroeffentlichungen.json, waechter.json, logs/
 tests/                    node:test
 ```
