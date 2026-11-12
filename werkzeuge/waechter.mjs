@@ -66,12 +66,18 @@ export function echteZertifikatsPruefung(host, port = 443) {
 }
 
 /**
- * Zeigt unter Windows eine Mitteilung an. Auf anderen Systemen und falls die
- * Windows-Toast-API nicht bereitsteht, bleibt die Meldung im Log.
+ * Zeigt eine Mitteilung an: am Mac über osascript, unter Windows als
+ * Toast. Auf anderen Systemen oder wenn der Toast scheitert, bleibt sie im Log.
  * Für Tests ersetzbar.
  */
 export function echteMitteilung(text) {
   const betriebssystem = platform();
+  if (betriebssystem === 'darwin') {
+    return new Promise((eintragen) => {
+      const skript = `display notification ${JSON.stringify(text)} with title "Wächter: eigene Website"`;
+      execFile('osascript', ['-e', skript], () => eintragen());
+    });
+  }
   if (betriebssystem !== 'win32') {
     zeile('befund', `Wächter-Mitteilung: ${text}`);
     return Promise.resolve();
