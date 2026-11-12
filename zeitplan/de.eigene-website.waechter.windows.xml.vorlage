@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+  Vorlage fuer die Windows-Aufgabenplanung. Laeuft montags um 08:30 und holt
+  einen verpassten Lauf nach, sobald du wieder angemeldet bist.
+
+  Vor dem Registrieren alle Platzhalter an aufgabe-anlegen.ps1 uebergeben:
+    __NODE_PFAD__    absoluter Pfad zu node.exe, zum Beispiel C:\\Program Files\\nodejs\\node.exe
+    __PROJEKT_PFAD__ absoluter Pfad zum Projektordner mit package.json und seite.json
+    __BENUTZER__     dein Windows-Benutzername, Ausgabe von `whoami`
+
+  Ergebnisdetails stehen nach dem Lauf in arbeit\\waechter.json.
+-->
+<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Description>Prueft woechentlich die oeffentliche eigene Website.</Description>
+  </RegistrationInfo>
+  <Triggers>
+    <CalendarTrigger>
+      <StartBoundary>2026-01-05T08:30:00</StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByWeek>
+        <WeeksInterval>1</WeeksInterval>
+        <DaysOfWeek><Monday /></DaysOfWeek>
+      </ScheduleByWeek>
+    </CalendarTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>__BENUTZER__</UserId>
+      <LogonType>InteractiveToken</LogonType>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <ExecutionTimeLimit>PT15M</ExecutionTimeLimit>
+    <Priority>7</Priority>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>__NODE_PFAD__</Command>
+      <Arguments>&quot;__PROJEKT_PFAD__\werkzeuge\waechter.mjs&quot;</Arguments>
+      <WorkingDirectory>__PROJEKT_PFAD__</WorkingDirectory>
+    </Exec>
+  </Actions>
+</Task>

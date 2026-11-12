@@ -252,7 +252,7 @@ test('Formulare: Ziel im gebauten dist/ wechselt exakt mit seite.json.hosting.an
 
     seite.hosting = { anbieter: 'vercel' };
     writeFileSync(SEITE_PFAD, JSON.stringify(seite, null, 2) + '\n', 'utf8');
-    execFileSync('npx', ['astro', 'build'], { cwd: WURZEL, stdio: 'ignore' });
+    execFileSync(process.execPath, [join(WURZEL, 'node_modules', 'astro', 'bin', 'astro.mjs'), 'build'], { cwd: WURZEL, stdio: 'ignore' });
     const kontaktVercel = readFileSync(join(WURZEL, 'dist', 'kontakt.html'), 'utf8');
     const newsletterVercel = readFileSync(join(WURZEL, 'dist', 'newsletter.html'), 'utf8');
     assert.match(kontaktVercel, /<form[^>]*action="\/api\/kontakt"/);
@@ -261,7 +261,7 @@ test('Formulare: Ziel im gebauten dist/ wechselt exakt mit seite.json.hosting.an
 
     seite.hosting = { anbieter: 'netlify' };
     writeFileSync(SEITE_PFAD, JSON.stringify(seite, null, 2) + '\n', 'utf8');
-    execFileSync('npx', ['astro', 'build'], { cwd: WURZEL, stdio: 'ignore' });
+    execFileSync(process.execPath, [join(WURZEL, 'node_modules', 'astro', 'bin', 'astro.mjs'), 'build'], { cwd: WURZEL, stdio: 'ignore' });
     const kontaktNetlify = readFileSync(join(WURZEL, 'dist', 'kontakt.html'), 'utf8');
     const newsletterNetlify = readFileSync(join(WURZEL, 'dist', 'newsletter.html'), 'utf8');
     assert.match(kontaktNetlify, /data-netlify="true"/);
@@ -271,7 +271,7 @@ test('Formulare: Ziel im gebauten dist/ wechselt exakt mit seite.json.hosting.an
   } finally {
     // seite.json exakt zurück, dann dist/ wieder auf den Standardzustand bauen.
     writeFileSync(SEITE_PFAD, ursprung, 'utf8');
-    execFileSync('npx', ['astro', 'build'], { cwd: WURZEL, stdio: 'ignore' });
+    execFileSync(process.execPath, [join(WURZEL, 'node_modules', 'astro', 'bin', 'astro.mjs'), 'build'], { cwd: WURZEL, stdio: 'ignore' });
     const zurueckgelesen = readFileSync(SEITE_PFAD, 'utf8');
     assert.equal(zurueckgelesen, ursprung);
   }

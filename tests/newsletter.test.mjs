@@ -142,8 +142,9 @@ test('newsletter: genau die Felder, die das gebaute Formular schickt, führen zu
   const { readFileSync, existsSync } = await import('node:fs');
   if (!existsSync('dist/newsletter.html')) {
     // Frische Kopie ohne Build: einmal bauen, statt still zu scheitern.
-    const { execSync } = await import('node:child_process');
-    execSync('npx astro build', { stdio: 'ignore' });
+    const { execFileSync } = await import('node:child_process');
+    const { resolve } = await import('node:path');
+    execFileSync(process.execPath, [resolve('node_modules', 'astro', 'bin', 'astro.mjs'), 'build'], { stdio: 'ignore' });
   }
   const html = readFileSync('dist/newsletter.html', 'utf8');
   const felder = {};
