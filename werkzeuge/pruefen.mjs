@@ -563,7 +563,8 @@ async function hauptlauf() {
   }
 
   if (!ohneBuild) {
-    const ergebnis = spawnSync('npm', ['run', 'build'], { cwd: WURZEL, stdio: 'inherit' });
+    const astro = join(WURZEL, 'node_modules', 'astro', 'bin', 'astro.mjs');
+    const ergebnis = spawnSync(process.execPath, [astro, 'build'], { cwd: WURZEL, stdio: 'inherit' });
     if (ergebnis.status !== 0) {
       zeile('fehler', 'npm run build ist fehlgeschlagen.', 'Lies die Fehlermeldung des Builds und behebe sie, bevor du prüfst.');
       process.exitCode = 1;

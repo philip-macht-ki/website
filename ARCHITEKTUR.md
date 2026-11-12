@@ -41,6 +41,21 @@ Browser und trägt Schlüssel selbst ein.
   (Vercel: Environment variables, Netlify: Environment variables). Skripte
   geben Schlüssel nie aus.
 
+## Unter Windows
+
+Die Vorlage läuft unter Windows 11. Node LTS und Git installierst du in
+PowerShell mit `winget install OpenJS.NodeJS.LTS` und `winget install Git.Git`.
+Danach PowerShell neu öffnen, das Projekt holen, `npm install` ausführen und
+mit `npm run dev` unter http://localhost:4321 vorschauen. `npm run vorschau`
+und `npm run veroeffentlichen` verhalten sich wie auf dem Mac.
+
+Für den wöchentlichen Wächter gibt es
+`zeitplan/de.eigene-website.waechter.windows.xml.vorlage`. Die Vorlage richtet
+mit `schtasks` eine Aufgabe für montags 08:30 ein, nur für den angemeldeten
+Benutzer und mit Nachholen eines verpassten Laufs. Details stehen in
+`einrichten.md`. Der Wächter prüft ausschließlich die öffentliche Seite und
+kann deshalb alternativ als Cloud-Routine von Claude laufen.
+
 ## Ordner
 
 ```
@@ -254,7 +269,7 @@ Abhängigkeit: `nodemailer`.
 | `vorschau` | werkzeuge/vorschau.mjs | pruefen, dann je nach `hosting.anbieter` `vercel deploy` (Standard) oder `netlify deploy --dir dist` (Entwurf, kostenlos), gibt die Vorschauadresse aus |
 | `veroeffentlichen` | werkzeuge/veroeffentlichen.mjs | pruefen; bei Netlify Zähler gegen die Grenze prüfen (bei Grenze `befund:` und Abbruch außer `-- --trotzdem`); dann `vercel deploy --prod` (Standard) oder `netlify deploy --prod --dir dist`, Zähler +1 (bei Vercel ohne Sperre) |
 | `rechtstexte` | werkzeuge/rechtstexte.mjs | schreibt `inhalt/impressum.md` und `inhalt/datenschutz.md` aus `seite.json` und den Bausteinen der eingeschalteten Dienste; fehlende Pflichtangaben → `fehler:` |
-| `waechter` | werkzeuge/waechter.mjs | prüft die Live-Seite (siehe unten), schreibt `arbeit/waechter.json`, macOS-Mitteilung bei Befund |
+| `waechter` | werkzeuge/waechter.mjs | prüft die Live-Seite (siehe unten), schreibt `arbeit/waechter.json`, Windows-Toast bei Befund, sonst Logzeile |
 
 Zähler `arbeit/veroeffentlichungen.json`: `{"2026-10": ["2026-10-03T10:12:00+02:00", …]}`.
 
@@ -291,4 +306,4 @@ Vercel-Variante), bei eingeschaltetem Newsletter antwortet `/newsletter` mit
 seinem Formular und die Newsletter-Funktion (`/.netlify/functions/newsletter`
 oder `/api/newsletter`) auf GET mit 405 (lebt), Zähler der Veröffentlichungen
 unter der Grenze. Ergebnis als Zeile und bei Befund als Mitteilung
-(`osascript`), nie als automatische Reparatur.
+(Windows-Toast, sonst Logzeile), nie als automatische Reparatur.

@@ -28,6 +28,15 @@ du den Knopf auf Englisch und sagst dahinter auf Deutsch, was er tut.
 
 ## 1.1 Werkzeuge, ohne Admin-Passwort (Lektion web0-1)
 
+Unter Windows 10 oder 11: Öffne PowerShell und installiere Node LTS und Git
+mit `winget install OpenJS.NodeJS.LTS` und `winget install Git.Git`. Schließe
+PowerShell danach und öffne sie neu. Hol die Vorlage in einen eigenen Ordner,
+führe dort `npm install` und `npm run dev` aus und öffne
+http://localhost:4321. Vorschau und Veröffentlichen bleiben gleich:
+`npm run vorschau`, dann nur auf seinen Wunsch `npm run veroeffentlichen`.
+
+Auf dem Mac gilt:
+
 1. Prüf still, ob Node da ist: `node -v` (20 oder neuer).
 2. Fehlt es: **kein Homebrew, kein sudo.** Hol das offizielle Archiv von
    nodejs.org in seinen Benutzerordner. Nimm die aktuelle LTS-Version aus
@@ -270,7 +279,7 @@ nicht in der App) oder bei Cal.com und gibt dir den Link. Du trägst ihn in
 
 ## 3.4 Wächter (web5-3)
 
-Nur auf einem Mac, der montags früh wach ist, am besten dem Dauerrechner.
+Auf einem Mac, der montags früh wach ist, am besten dem Dauerrechner:
 Kopier `zeitplan/de.eigene-website.waechter.plist` nach
 `~/Library/LaunchAgents/`, ersetz die Platzhalter (Node-Pfad absolut, siehe
 `which node`, bei der Installation aus 1.1 also `~/.local/node/bin/node`
@@ -278,6 +287,15 @@ ausgeschrieben) und lade ihn (`launchctl bootstrap gui/$(id -u) …`). Test:
 `npm run waechter`. Häng danach, wenn der Mitgliederbereich es anbietet, ein
 Lebenszeichen an den Lauf, damit er eine Mail bekommt, wenn der Wächter
 ausbleibt.
+
+Unter Windows: Öffne PowerShell als angemeldeter Benutzer und registriere die
+Vorlage mit
+`./werkzeuge/aufgabe-anlegen.ps1 -Name "Eigene Website Wächter" -Werte @{ NODE_PFAD = 'C:\Pfad\zu\node.exe'; PROJEKT_PFAD = $PWD.Path; BENUTZER = (whoami) }`.
+Das Skript ersetzt die XML-Platzhalter sicher; `-Trocken` gibt das fertige XML
+zur Kontrolle aus, `-Entfernen` entfernt die Aufgabe. Test:
+`Start-ScheduledTask -TaskName "Eigene Website Wächter"`. Die Aufgabe läuft
+montags um 08:30 und holt einen verpassten Lauf nach. Der Wächter prüft nur die
+öffentliche Seite und kann deshalb auch als Cloud-Routine laufen.
 
 ## 3.5 Kontaktformular über Brevo (web9-2, optional)
 
@@ -363,4 +381,3 @@ Anbieters.
 5. Danach weiter wie in 1.6 ab Schritt 5. Braucht er den Schlüssel nicht mehr,
    löscht er ihn beim Anbieter, und du entfernst ihn mit
    `security delete-generic-password -s website-dns -a <anbieter>`.
-

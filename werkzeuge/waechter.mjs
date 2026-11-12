@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // waechter.mjs: prüft die Live-Seite (nicht den lokalen Stand). Repariert
-// nie automatisch, meldet nur. Läuft wöchentlich über launchd, siehe
-// zeitplan/de.eigene-website.waechter.plist.
+// nie automatisch, meldet nur. Läuft wöchentlich über launchd oder die
+// Windows-Aufgabenplanung, siehe zeitplan/.
 
 import { execFile } from 'node:child_process';
+import { platform } from 'node:os';
 import { connect as tlsConnect } from 'node:tls';
 import { pathToFileURL } from 'node:url';
 import {
@@ -64,12 +65,41 @@ export function echteZertifikatsPruefung(host, port = 443) {
   });
 }
 
-/** Echte macOS-Mitteilung. Für Tests ersetzbar. */
+/**
+ * Zeigt unter Windows eine Mitteilung an. Auf anderen Systemen und falls die
+ * Windows-Toast-API nicht bereitsteht, bleibt die Meldung im Log.
+ * Für Tests ersetzbar.
+ */
 export function echteMitteilung(text) {
+  const betriebssystem = platform();
+  if (betriebssystem !== 'win32') {
+    zeile('befund', `Wächter-Mitteilung: ${text}`);
+    return Promise.resolve();
+  }
+
+  const befehl = 'powershell.exe';
+  const argumente = ['-NoProfile', '-NonInteractive', '-Command', windowsToastSkript(text)];
   return new Promise((eintragen) => {
-    const skript = `display notification ${JSON.stringify(text)} with title "Wächter: eigene Website"`;
-    execFile('osascript', ['-e', skript], () => eintragen());
+    execFile(befehl, argumente, (fehler) => {
+      if (fehler) zeile('befund', `Wächter-Mitteilung konnte nicht angezeigt werden: ${text}`);
+      eintragen();
+    });
   });
+}
+
+function windowsToastSkript(text) {
+  const titel = JSON.stringify('Wächter: eigene Website');
+  const nachricht = JSON.stringify(text);
+  return [
+    '[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null',
+    '$vorlage = [Windows.UI.Notifications.ToastTemplateType]::ToastText02',
+    '$xml = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent($vorlage)',
+    '$felder = $xml.GetElementsByTagName("text")',
+    `$felder.Item(0).AppendChild($xml.CreateTextNode(${titel})) | Out-Null`,
+    `$felder.Item(1).AppendChild($xml.CreateTextNode(${nachricht})) | Out-Null`,
+    '$toast = [Windows.UI.Notifications.ToastNotification]::new($xml)',
+    '[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("Eigene Website").Show($toast)',
+  ].join('; ');
 }
 
 function adresseAus(domain, pfad = '/') {
